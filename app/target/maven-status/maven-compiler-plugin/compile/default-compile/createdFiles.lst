@@ -1,0 +1,6 @@
+com/aviafix/FixerApplication.class
+com/aviafix/FixerConfiguration.class
+com/aviafix/health/TemplateHealthCheck.class
+com/aviafix/resources/FixerResource.class
+com/aviafix/api/Saying.class
+com/aviafix/FixerApplication$1.class
