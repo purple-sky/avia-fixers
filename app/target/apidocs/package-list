@@ -1,4 +1,10 @@
 com.aviafix
 com.aviafix.api
+com.aviafix.core
+com.aviafix.db
+com.aviafix.db.generated
+com.aviafix.db.generated.tables
+com.aviafix.db.generated.tables.pojos
+com.aviafix.db.generated.tables.records
 com.aviafix.health
 com.aviafix.resources

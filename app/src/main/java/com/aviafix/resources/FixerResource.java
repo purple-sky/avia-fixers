@@ -3,8 +3,8 @@ package com.aviafix.resources;
 import com.aviafix.api.Saying;
 import com.codahale.metrics.annotation.Timed;
 import org.jooq.DSLContext;
-import org.jooq.Field;
-import org.jooq.Query;
+//import org.jooq.Field;
+//import org.jooq.Query;
 import org.jooq.impl.DSL;
 
 import javax.ws.rs.GET;
@@ -39,15 +39,15 @@ public class FixerResource {
         final String val1 = (database.select().from("users").fetch().format());
 
         final String val2 = database
-                .select(DSL.field("opartNum", int.class))
-                .from(DSL.table("orders"))
-                .where(DSL.field("opartNum", int.class).eq(21))
+                .select(DSL.field("partNum", int.class))
+                .from(DSL.table("hasParts"))
+                .where(DSL.field("partNum", int.class).eq(21))
                 .fetch()
                 .format();
         final String value = String.format(template, name.orElse(defaultName));
 
         final String val3 = database
-                .fetch("SELECT opartNum FROM orders WHERE opartNum = ?", 21)
+                .fetch("SELECT partNum FROM hasParts WHERE partNum = ?", 21)
                 .format();
 
         //return new Saying(counter.incrementAndGet(), value);

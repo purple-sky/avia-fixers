@@ -120,6 +120,227 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.jooq</groupId>
+                <artifactId>jooq-codegen-maven</artifactId>
+                <version>3.8.5</version>
+
+                <dependencies>
+                    <dependency>
+                        <groupId>mysql</groupId>
+                        <artifactId>mysql-connector-java</artifactId>
+                        <version>5.1.6</version>
+                    </dependency>
+                </dependencies>
+
+                <!-- Specify the plugin configuration.
+                     The configuration format is the same as for the standalone code generator -->
+                <configuration>
+
+                    <!-- JDBC connection parameters -->
+                    <jdbc>
+                        <driver>com.mysql.jdbc.Driver</driver>
+                        <url>${jdbc.url}</url>
+                        <user>${db.user}</user>
+                        <password>${db.pass}</password>
+                    </jdbc>
+
+                    <!-- Generator parameters -->
+                    <generator>
+                        <database>
+                            <name>org.jooq.util.mysql.MySQLDatabase</name>
+                            <includes>.*</includes>
+                            <excludes></excludes>
+                            <inputSchema>${db.schema}</inputSchema>
+
+                            <customTypes>
+                                <customType>
+                                    <!-- Specify the fully-qualified class name of your custom type -->
+                                    <name>com.aviafix.db.DateConverter</name>
+
+                                    <!-- Associate that custom type with your converter. Note, a
+                                         custom type can only have one converter in jOOQ -->
+                                    <type>java.time.LocalDate</type>
+                                    <converter>com.aviafix.db.DateConverter</converter>
+                                </customType>
+                            </customTypes>
+
+                            <!-- Then, associate custom types with database columns -->
+                            <forcedTypes>
+                                <forcedType>
+                                    <!-- Specify again he fully-qualified class name of your custom type -->
+                                    <name>com.aviafix.db.DateConverter</name>
+
+                                    <!-- Add a list of comma-separated regular expressions matching columns -->
+                                    <expressions>
+                                        (.*orders\.date)|
+                                        (.*orders\.orderRepairDate)|
+                                        (.*hasParts\.repairDate)|
+                                        (.*payOffline\.pymntDatepayOffline)|
+                                        (.*payOnline\.pymntDateOnline)
+                                    </expressions>
+                                    <types>.*</types>
+                                </forcedType>
+                            </forcedTypes>
+
+                        </database>
+                        <target>
+                            <packageName>com.aviafix.db.generated</packageName>
+                            <directory>src/main/java</directory>
+                        </target>
+                        <generate>
+                            <records>true</records>
+                            <pojos>true</pojos>
+                        </generate>
+                        <strategy>
+                            <matchers>
+                                <tables>
+                                    <table>
+                                        <!-- Expression is omitted. This will make this rule apply to all tables -->
+                                        <tableIdentifier>
+                                            <!-- The optional transform element lets you apply a name transformation algorithm
+                                            to transform the actual database name into a more convenient form. Possible values are:
+                                                    - AS_IS  : Leave the database name as it is             : MY_name => MY_name
+                                            - LOWER  : Transform the database name into lower case  : MY_name => my_name
+                                            - UPPER  : Transform the database name into upper case  : MY_name => MY_NAME
+                                            - CAMEL  : Transform the database name into camel case  : MY_name => myName
+                                            - PASCAL : Transform the database name into pascal case : MY_name => MyName -->
+                                            <transform>UPPER</transform>
+                                            <!-- The mandatory expression element lets you specify a replacement expression to be used when
+                                            replacing the matcher's regular expression. You can use indexed variables $0, $1, $2. -->
+                                            <expression>$0</expression>
+                                        </tableIdentifier>
+                                        <tableClass>
+                                            <!-- The optional transform element lets you apply a name transformation algorithm
+                                            to transform the actual database name into a more convenient form. Possible values are:
+                                                    - AS_IS  : Leave the database name as it is             : MY_name => MY_name
+                                            - LOWER  : Transform the database name into lower case  : MY_name => my_name
+                                            - UPPER  : Transform the database name into upper case  : MY_name => MY_NAME
+                                            - CAMEL  : Transform the database name into camel case  : MY_name => myName
+                                            - PASCAL : Transform the database name into pascal case : MY_name => MyName -->
+                                            <transform>UPPER</transform>
+                                            <!-- The mandatory expression element lets you specify a replacement expression to be used when
+                                            replacing the matcher's regular expression. You can use indexed variables $0, $1, $2. -->
+                                            <expression>$0</expression>
+                                        </tableClass>
+                                        <daoClass>
+                                            <!-- The optional transform element lets you apply a name transformation algorithm
+                                            to transform the actual database name into a more convenient form. Possible values are:
+                                                    - AS_IS  : Leave the database name as it is             : MY_name => MY_name
+                                            - LOWER  : Transform the database name into lower case  : MY_name => my_name
+                                            - UPPER  : Transform the database name into upper case  : MY_name => MY_NAME
+                                            - CAMEL  : Transform the database name into camel case  : MY_name => myName
+                                            - PASCAL : Transform the database name into pascal case : MY_name => MyName -->
+                                            <transform>UPPER</transform>
+                                            <!-- The mandatory expression element lets you specify a replacement expression to be used when
+                                            replacing the matcher's regular expression. You can use indexed variables $0, $1, $2. -->
+                                            <expression>$0</expression>
+                                        </daoClass>
+                                        <recordClass>
+                                            <!-- The optional transform element lets you apply a name transformation algorithm
+                                            to transform the actual database name into a more convenient form. Possible values are:
+                                                    - AS_IS  : Leave the database name as it is             : MY_name => MY_name
+                                            - LOWER  : Transform the database name into lower case  : MY_name => my_name
+                                            - UPPER  : Transform the database name into upper case  : MY_name => MY_NAME
+                                            - CAMEL  : Transform the database name into camel case  : MY_name => myName
+                                            - PASCAL : Transform the database name into pascal case : MY_name => MyName -->
+                                            <transform>UPPER</transform>
+                                            <!-- The mandatory expression element lets you specify a replacement expression to be used when
+                                            replacing the matcher's regular expression. You can use indexed variables $0, $1, $2. -->
+                                            <expression>$0Record</expression>
+                                        </recordClass>
+                                        <interfaceClass>
+                                            <!-- The optional transform element lets you apply a name transformation algorithm
+                                            to transform the actual database name into a more convenient form. Possible values are:
+                                                    - AS_IS  : Leave the database name as it is             : MY_name => MY_name
+                                            - LOWER  : Transform the database name into lower case  : MY_name => my_name
+                                            - UPPER  : Transform the database name into upper case  : MY_name => MY_NAME
+                                            - CAMEL  : Transform the database name into camel case  : MY_name => myName
+                                            - PASCAL : Transform the database name into pascal case : MY_name => MyName -->
+                                            <transform>UPPER</transform>
+                                            <!-- The mandatory expression element lets you specify a replacement expression to be used when
+                                            replacing the matcher's regular expression. You can use indexed variables $0, $1, $2. -->
+                                            <expression>$0</expression>
+                                        </interfaceClass>
+                                        <pojoClass>
+                                            <!-- The optional transform element lets you apply a name transformation algorithm
+                                            to transform the actual database name into a more convenient form. Possible values are:
+                                                    - AS_IS  : Leave the database name as it is             : MY_name => MY_name
+                                            - LOWER  : Transform the database name into lower case  : MY_name => my_name
+                                            - UPPER  : Transform the database name into upper case  : MY_name => MY_NAME
+                                            - CAMEL  : Transform the database name into camel case  : MY_name => myName
+                                            - PASCAL : Transform the database name into pascal case : MY_name => MyName -->
+                                            <transform>UPPER</transform>
+                                            <!-- The mandatory expression element lets you specify a replacement expression to be used when
+                                            replacing the matcher's regular expression. You can use indexed variables $0, $1, $2. -->
+                                            <expression>$0Projection</expression>
+                                        </pojoClass>
+                                    </table>
+                                </tables>
+                                <fields>
+                                    <field>
+                                        <fieldIdentifier>
+                                            <!-- The optional transform element lets you apply a name transformation algorithm
+                                            to transform the actual database name into a more convenient form. Possible values are:
+                                                    - AS_IS  : Leave the database name as it is             : MY_name => MY_name
+                                            - LOWER  : Transform the database name into lower case  : MY_name => my_name
+                                            - UPPER  : Transform the database name into upper case  : MY_name => MY_NAME
+                                            - CAMEL  : Transform the database name into camel case  : MY_name => myName
+                                            - PASCAL : Transform the database name into pascal case : MY_name => MyName -->
+                                            <transform>UPPER</transform>
+                                            <!-- The mandatory expression element lets you specify a replacement expression to be used when
+                                            replacing the matcher's regular expression. You can use indexed variables $0, $1, $2. -->
+                                            <expression>$0</expression>
+                                        </fieldIdentifier>
+                                        <fieldMember>
+                                            <!-- The optional transform element lets you apply a name transformation algorithm
+                                            to transform the actual database name into a more convenient form. Possible values are:
+                                                    - AS_IS  : Leave the database name as it is             : MY_name => MY_name
+                                            - LOWER  : Transform the database name into lower case  : MY_name => my_name
+                                            - UPPER  : Transform the database name into upper case  : MY_name => MY_NAME
+                                            - CAMEL  : Transform the database name into camel case  : MY_name => myName
+                                            - PASCAL : Transform the database name into pascal case : MY_name => MyName -->
+                                            <transform>UPPER</transform>
+                                            <!-- The mandatory expression element lets you specify a replacement expression to be used when
+                                            replacing the matcher's regular expression. You can use indexed variables $0, $1, $2. -->
+                                            <expression>$0</expression>
+                                        </fieldMember>
+                                        <fieldSetter>
+                                            <!-- The optional transform element lets you apply a name transformation algorithm
+                                            to transform the actual database name into a more convenient form. Possible values are:
+                                                    - AS_IS  : Leave the database name as it is             : MY_name => MY_name
+                                            - LOWER  : Transform the database name into lower case  : MY_name => my_name
+                                            - UPPER  : Transform the database name into upper case  : MY_name => MY_NAME
+                                            - CAMEL  : Transform the database name into camel case  : MY_name => myName
+                                            - PASCAL : Transform the database name into pascal case : MY_name => MyName -->
+                                            <transform>UPPER</transform>
+                                            <!-- The mandatory expression element lets you specify a replacement expression to be used when
+                                            replacing the matcher's regular expression. You can use indexed variables $0, $1, $2. -->
+                                            <expression>$0</expression>
+                                        </fieldSetter>
+                                        <fieldGetter>
+                                            <!-- The optional transform element lets you apply a name transformation algorithm
+                                            to transform the actual database name into a more convenient form. Possible values are:
+                                                    - AS_IS  : Leave the database name as it is             : MY_name => MY_name
+                                            - LOWER  : Transform the database name into lower case  : MY_name => my_name
+                                            - UPPER  : Transform the database name into upper case  : MY_name => MY_NAME
+                                            - CAMEL  : Transform the database name into camel case  : MY_name => myName
+                                            - PASCAL : Transform the database name into pascal case : MY_name => MyName -->
+                                            <transform>UPPER</transform>
+                                            <!-- The mandatory expression element lets you specify a replacement expression to be used when
+                                            replacing the matcher's regular expression. You can use indexed variables $0, $1, $2. -->
+                                            <expression>$0</expression>
+                                        </fieldGetter>
+                                    </field>
+                                </fields>
+                            </matchers>
+                        </strategy>
+                    </generator>
+
+
+
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
