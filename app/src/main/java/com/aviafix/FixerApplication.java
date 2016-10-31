@@ -1,6 +1,7 @@
 package com.aviafix;
 
 import com.aviafix.resources.OrdersResourse;
+import com.aviafix.resources.PartsResourse;
 import com.bendb.dropwizard.jooq.*;
 import io.dropwizard.Application;
 import io.dropwizard.db.*;
@@ -48,6 +49,7 @@ public class FixerApplication extends Application<FixerConfiguration> {
         );
 
         final OrdersResourse ordersResourse = new OrdersResourse();
+        final PartsResourse partsResourse = new PartsResourse();
 
         final TemplateHealthCheck healthCheck =
                 new TemplateHealthCheck(configuration.getTemplate());
@@ -55,6 +57,7 @@ public class FixerApplication extends Application<FixerConfiguration> {
         environment.healthChecks().register("template", healthCheck);
         environment.jersey().register(resource);
         environment.jersey().register(ordersResourse);
+        environment.jersey().register(partsResourse);
 
     }
 

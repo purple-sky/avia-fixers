@@ -3,7 +3,7 @@ package com.aviafix.api;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 /**
  * Created by AlexB on 2016-10-29.
@@ -14,7 +14,7 @@ public class PartsWriteRepresentation {
     public final String repairStatus;
     public final Double repairCost;
     public final Double sellPrice;
-    public final Date repairDate;
+    public final LocalDate repairDate;
     public final int orderNumber;
     public final int qtty;
 
@@ -24,7 +24,7 @@ public class PartsWriteRepresentation {
             @JsonProperty("status") String repairStatus,
             @JsonProperty("repairCost") Double repairCost,
             @JsonProperty("sellPrice") Double sellPrice,
-            @JsonProperty("repairDate") Date repairDate,
+            @JsonProperty("repairDate") LocalDate repairDate,
             @JsonProperty("orderNumber") int orderNumber,
             @JsonProperty("qtty") int qtty) {
 
