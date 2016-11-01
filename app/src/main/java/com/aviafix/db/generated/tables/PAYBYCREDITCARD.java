@@ -4,11 +4,12 @@
 package com.aviafix.db.generated.tables;
 
 
+import com.aviafix.db.DateConverter;
 import com.aviafix.db.generated.Aviafixers;
 import com.aviafix.db.generated.Keys;
 import com.aviafix.db.generated.tables.records.PAYBYCREDITCARDRECORD;
 
-import java.sql.Date;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 
@@ -35,7 +36,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class PAYBYCREDITCARD extends TableImpl<PAYBYCREDITCARDRECORD> {
 
-    private static final long serialVersionUID = 2067534439;
+    private static final long serialVersionUID = 244302882;
 
     /**
      * The reference instance of <code>AviaFixers.payByCreditCard</code>
@@ -63,7 +64,7 @@ public class PAYBYCREDITCARD extends TableImpl<PAYBYCREDITCARDRECORD> {
     /**
      * The column <code>AviaFixers.payByCreditCard.expDate</code>.
      */
-    public final TableField<PAYBYCREDITCARDRECORD, Date> EXPDATE = createField("expDate", org.jooq.impl.SQLDataType.DATE, this, "");
+    public final TableField<PAYBYCREDITCARDRECORD, LocalDate> EXPDATE = createField("expDate", org.jooq.impl.SQLDataType.DATE, this, "", new DateConverter());
 
     /**
      * The column <code>AviaFixers.payByCreditCard.code</code>.

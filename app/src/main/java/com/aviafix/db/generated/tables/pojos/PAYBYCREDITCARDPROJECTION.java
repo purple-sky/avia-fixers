@@ -5,7 +5,7 @@ package com.aviafix.db.generated.tables.pojos;
 
 
 import java.io.Serializable;
-import java.sql.Date;
+import java.time.LocalDate;
 
 import javax.annotation.Generated;
 
@@ -23,14 +23,14 @@ import javax.annotation.Generated;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class PAYBYCREDITCARDPROJECTION implements Serializable {
 
-    private static final long serialVersionUID = -369597715;
+    private static final long serialVersionUID = 1444342293;
 
-    private Integer ETID;
-    private Integer CREDITCARDNUM;
-    private Date    EXPDATE;
-    private Integer CODE;
-    private String  CARDHOLDERNAME;
-    private Double  AMOUNT;
+    private Integer   ETID;
+    private Integer   CREDITCARDNUM;
+    private LocalDate EXPDATE;
+    private Integer   CODE;
+    private String    CARDHOLDERNAME;
+    private Double    AMOUNT;
 
     public PAYBYCREDITCARDPROJECTION() {}
 
@@ -44,12 +44,12 @@ public class PAYBYCREDITCARDPROJECTION implements Serializable {
     }
 
     public PAYBYCREDITCARDPROJECTION(
-        Integer ETID,
-        Integer CREDITCARDNUM,
-        Date    EXPDATE,
-        Integer CODE,
-        String  CARDHOLDERNAME,
-        Double  AMOUNT
+        Integer   ETID,
+        Integer   CREDITCARDNUM,
+        LocalDate EXPDATE,
+        Integer   CODE,
+        String    CARDHOLDERNAME,
+        Double    AMOUNT
     ) {
         this.ETID = ETID;
         this.CREDITCARDNUM = CREDITCARDNUM;
@@ -75,11 +75,11 @@ public class PAYBYCREDITCARDPROJECTION implements Serializable {
         this.CREDITCARDNUM = CREDITCARDNUM;
     }
 
-    public Date EXPDATE() {
+    public LocalDate EXPDATE() {
         return this.EXPDATE;
     }
 
-    public void EXPDATE(Date EXPDATE) {
+    public void EXPDATE(LocalDate EXPDATE) {
         this.EXPDATE = EXPDATE;
     }
 

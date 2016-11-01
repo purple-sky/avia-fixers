@@ -46,7 +46,7 @@ public class OrdersResourse {
     @Timed
     @Consumes(MediaType.APPLICATION_JSON)
     public Response postOrder(
-            @Context DSLContext database,
+            @Context DSLContext database, // assuresconnection to db
             OrderWriteRepresentation order
     ) {
 
