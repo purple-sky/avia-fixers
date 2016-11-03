@@ -112,7 +112,7 @@ public class OrdersResourse {
 
         if (record != null) {
              database.update(ORDERS)
-                    .set(ORDERS.ORDERSTATUS,order.status)
+                    .set(ORDERS.ORDERSTATUS, order.status) // OrderStatus.PAID
                     .where(ORDERS.ORDERNUM.equal(id))
                     .execute();
             return "Order #" + id + " updated";

@@ -37,7 +37,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class PAYONLINE extends TableImpl<PAYONLINERECORD> {
 
-    private static final long serialVersionUID = -1733291732;
+    private static final long serialVersionUID = 1692638449;
 
     /**
      * The reference instance of <code>AviaFixers.payOnline</code>
@@ -115,7 +115,7 @@ public class PAYONLINE extends TableImpl<PAYONLINERECORD> {
      */
     @Override
     public List<UniqueKey<PAYONLINERECORD>> getKeys() {
-        return Arrays.<UniqueKey<PAYONLINERECORD>>asList(Keys.KEY_PAYONLINE_PRIMARY, Keys.KEY_PAYONLINE_ORDNUMPAYONL_UNIQUE, Keys.KEY_PAYONLINE_ETIDPAYONLINE_UNIQUE);
+        return Arrays.<UniqueKey<PAYONLINERECORD>>asList(Keys.KEY_PAYONLINE_PRIMARY, Keys.KEY_PAYONLINE_ORDNUMPAYONL_UNIQUE);
     }
 
     /**

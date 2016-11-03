@@ -16,6 +16,7 @@ import java.util.List;
 import javax.annotation.Generated;
 
 import org.jooq.Field;
+import org.jooq.Identity;
 import org.jooq.Schema;
 import org.jooq.Table;
 import org.jooq.TableField;
@@ -36,7 +37,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class PAYBYCREDITCARD extends TableImpl<PAYBYCREDITCARDRECORD> {
 
-    private static final long serialVersionUID = 244302882;
+    private static final long serialVersionUID = -405877267;
 
     /**
      * The reference instance of <code>AviaFixers.payByCreditCard</code>
@@ -109,6 +110,14 @@ public class PAYBYCREDITCARD extends TableImpl<PAYBYCREDITCARDRECORD> {
     @Override
     public Schema getSchema() {
         return Aviafixers.AVIAFIXERS;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Identity<PAYBYCREDITCARDRECORD, Integer> getIdentity() {
+        return Keys.IDENTITY_PAYBYCREDITCARD;
     }
 
     /**
