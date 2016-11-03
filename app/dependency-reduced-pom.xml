@@ -123,7 +123,8 @@
                                         (.*orders\.orderRepairDate)|
                                         (.*hasParts\.repairDate)|
                                         (.*payOffline\.pymntDatepayOffline)|
-                                        (.*payOnline\.pymntDateOnline)</expressions>
+                                        (.*payOnline\.pymntDateOnline)|
+                                        (.*payByCreditCard\.expDate)</expressions>
                   <types>.*</types>
                 </forcedType>
               </forcedTypes>

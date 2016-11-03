@@ -66,13 +66,13 @@ public class PartsResourse {
          // TODO: write check for status not to be paid
          if (record != null) {
 
-             final Record recordOrder = database.select(
+             /*final Record recordOrder = database.select(
                      ORDERS.ORDERNUM.cast(Integer.class),
                      ORDERS.ORDERSTATUS.cast(String.class)
              )
                      .from(ORDERS)
                      .where(ORDERS.ORDERNUM.equal(record.getValue(HASPARTS.PORDERNUM, Integer.class)))
-                     .fetchOne();
+                     .fetchOne();*/
 
              // updating status
              if (part.repairStatus == null) {
@@ -87,6 +87,8 @@ public class PartsResourse {
                          .where(HASPARTS.PARTNUM.equal(part.partNumber))
                          .execute();
                  System.out.println("Part #" + part.partNumber + " new status");
+
+                 //TODO: add check for all parts in order have "Complete" => update order status to complete
              }
 
              // updating repair cost
@@ -140,11 +142,6 @@ public class PartsResourse {
          }
 
 
-
-
-
-
-
          /*final HASPARTSPROJECTION partProjection = database.update(HASPARTS)
 
                  .set(HASPARTS.REPAIRCOST,part.repairCost)
@@ -165,5 +162,50 @@ public class PartsResourse {
 
      }
 
+    @DELETE
+    @Path("/{id}")
+    public String deletePart (
+            @Context DSLContext database,
+            @PathParam("id") Integer id
+    ) {
+
+        final Record record = database.select(
+                HASPARTS.PARTNUM.cast(Integer.class),
+                HASPARTS.REPAIRSTATUS.cast(String.class),
+                HASPARTS.PORDERNUM.cast(Integer.class))
+                .from(HASPARTS)
+                .where(HASPARTS.PARTNUM.equal(id))
+                .fetchOne();
+
+        if (record != null) {
+            if (record.getValue(HASPARTS.REPAIRSTATUS, String.class).equals(PartStatus.PLACED)) {
+                try {
+                    database.delete(HASPARTS)
+                            .where(HASPARTS.PARTNUM.equal(id))
+                            .execute();
+                } catch (Exception e) {
+                    return "Sorry something went wrong";
+                }
+
+                // Code below checks whether or not order has other parts.
+                // If no more parts, we delete order
+
+                final Record record1 = database.select()
+                .from(HASPARTS)
+                        .where(HASPARTS.PORDERNUM.equal(record.getValue(HASPARTS.PORDERNUM, Integer.class)))
+                        .fetchAny();
+
+                if (record1 == null) {
+                    database.delete(ORDERS)
+                            .where(ORDERS.ORDERNUM.equal(record.getValue(HASPARTS.PORDERNUM, Integer.class)))
+                            .execute();
+                }
+
+                return "Part #" + id + " deleted";
+            }
+            return "Part #" + id + " can't be deleted";
+        }
+        return "Part doesn't exist";
+    }
 
 }
