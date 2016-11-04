@@ -32,6 +32,7 @@ com/aviafix/api/OrderUpdateRepresentation.class
 com/aviafix/db/generated/DefaultCatalog.class
 com/aviafix/db/generated/tables/records/FINANCEOFFICE_EMPLOYEESRECORD.class
 com/aviafix/db/generated/Tables.class
+com/aviafix/resources/ElectronicPaymentResource.class
 com/aviafix/db/generated/tables/pojos/HASPARTSPROJECTION.class
 com/aviafix/resources/PartsResourse.class
 com/aviafix/db/generated/Keys$ForeignKeys0.class
@@ -40,6 +41,7 @@ com/aviafix/db/generated/tables/records/REPAIRRECORD.class
 com/aviafix/api/PartsUpdateRepresentation.class
 com/aviafix/core/PartStatus.class
 com/aviafix/db/generated/tables/pojos/USERSPROJECTION.class
+com/aviafix/api/ElectronicPaymentWriteRepresentation.class
 com/aviafix/db/generated/tables/PAYOFFLINE.class
 com/aviafix/db/generated/tables/ORDERS.class
 com/aviafix/db/generated/tables/records/CUSTOMER_USERSRECORD.class

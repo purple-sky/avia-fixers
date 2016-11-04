@@ -112,10 +112,12 @@ public class OrdersResourse {
 
         if (record != null) {
              database.update(ORDERS)
-                    .set(ORDERS.ORDERSTATUS, order.status) // OrderStatus.PAID
+                    .set(ORDERS.ORDERSTATUS, order.status)
                     .where(ORDERS.ORDERNUM.equal(id))
                     .execute();
             return "Order #" + id + " updated";
+
+            // TODO: update parts' status when order status is changed to "InProgress"
         }
 
         return "Order doesn't exist";

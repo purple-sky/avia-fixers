@@ -9,9 +9,7 @@ import com.aviafix.db.generated.tables.HASPARTS;
 import com.aviafix.db.generated.tables.pojos.HASPARTSPROJECTION;
 import com.aviafix.db.generated.tables.records.HASPARTSRECORD;
 import com.codahale.metrics.annotation.Timed;
-import org.jooq.DSLContext;
-import org.jooq.Record;
-import org.jooq.Result;
+import org.jooq.*;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
@@ -23,6 +21,9 @@ import java.util.Optional;
 
 import static com.aviafix.db.generated.tables.ORDERS.ORDERS;
 import static com.aviafix.db.generated.tables.HASPARTS.HASPARTS;
+import static org.jooq.impl.DSL.select;
+import static org.jooq.impl.DSL.sum;
+import static org.jooq.impl.DSL.val;
 
 /**
  * Created by AlexB on 2016-10-30.
@@ -62,6 +63,7 @@ public class PartsResourse {
                  .where(HASPARTS.PARTNUM.equal(part.partNumber))
                  .fetchOne();
 
+         final int ordNum = record.getValue(HASPARTS.PORDERNUM, Integer.class);
 
          // TODO: write check for status not to be paid
          if (record != null) {
@@ -104,6 +106,7 @@ public class PartsResourse {
                          .where(HASPARTS.PARTNUM.equal(part.partNumber))
                          .execute();
                  System.out.println("Part #" + part.partNumber + " new cost");
+
              }
 
              // updating sell price
@@ -119,6 +122,11 @@ public class PartsResourse {
                          .where(HASPARTS.PARTNUM.equal(part.partNumber))
                          .execute();
                  System.out.println("Part #" + part.partNumber + " new sell price");
+
+                 // update Order price = part_sell_price*qty
+
+                 database.fetch("UPDATE orders SET totalPrice = (SELECT ROUND(sum(sellPrice * qty), 2) FROM hasParts WHERE porderNum = ?) WHERE orderNum = ?", ordNum, ordNum)
+                         .format();
              }
 
              // updating repair date
@@ -134,6 +142,8 @@ public class PartsResourse {
                          .where(HASPARTS.PARTNUM.equal(part.partNumber))
                          .execute();
                  System.out.println("Part #" + part.partNumber + " new repair date");
+
+                 // TODO: update Order repair date = max repair date for all parts
              }
 
              return "Part #" + part.partNumber + " updated";
@@ -195,10 +205,13 @@ public class PartsResourse {
                         .where(HASPARTS.PORDERNUM.equal(record.getValue(HASPARTS.PORDERNUM, Integer.class)))
                         .fetchAny();
 
+
                 if (record1 == null) {
                     database.delete(ORDERS)
                             .where(ORDERS.ORDERNUM.equal(record.getValue(HASPARTS.PORDERNUM, Integer.class)))
                             .execute();
+                } else {
+                    // TODO: update price for order
                 }
 
                 return "Part #" + id + " deleted";

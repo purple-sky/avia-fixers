@@ -16,7 +16,7 @@ import javax.ws.rs.core.MediaType;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.Optional;
 
-@Path("/aviafix")
+@Path("/aviafix/test")
 @Produces(MediaType.APPLICATION_JSON)
 public class FixerResource {
     private final String template;
