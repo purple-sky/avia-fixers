@@ -1,6 +1,7 @@
 package com.aviafix.resources;
 
 import com.aviafix.api.ElectronicPaymentWriteRepresentation;
+import com.aviafix.api.OrderWriteRepresentation;
 import com.aviafix.core.OrderStatus;
 import com.codahale.metrics.annotation.Timed;
 import org.jooq.DSLContext;
@@ -63,18 +64,34 @@ public class ElectronicPaymentResource {
 
         database.insertInto(
                 PAYONLINE,
-                PAYONLINE.ETIDPAYONLINE
+                PAYONLINE.CIDPAYONLINE,
+                PAYONLINE.ORDNUMPAYONL,
+                PAYONLINE.ETIDPAYONLINE,
+                PAYONLINE.PYMNTDATEONLINE
         ).values(
-                ETID
+                epayment.customerID,
+                epayment.orderNumber,
+                ETID,
+                epayment.paymentDate
         ).execute();
 
-        database.insertInto(
-                ORDERS,
+        final int orderID = epayment.orderNumber;
+
+        Record record2 = database.select(
+                ORDERS.ORDERNUM,
+                ORDERS.ORDERCID,
                 ORDERS.ORDERSTATUS
-        ).values(
-                OrderStatus.PAID
-        ).execute();
+        )
+                .from(ORDERS)
+                .where(ORDERS.ORDERNUM.equal(orderID), ORDERS.ORDERSTATUS.equal(OrderStatus.COMPLETE))
+                .fetchOne();
 
+        if (record2 != null) {
+            database.update(ORDERS)
+                    .set(ORDERS.ORDERSTATUS, OrderStatus.PAID)
+                    .where(ORDERS.ORDERNUM.equal(orderID))
+                    .execute();
+        }
 
         return Response.created(
                 URI.create(
