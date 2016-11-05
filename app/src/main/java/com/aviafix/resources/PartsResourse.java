@@ -65,110 +65,111 @@ public class PartsResourse {
 
          final int ordNum = record.getValue(HASPARTS.PORDERNUM, Integer.class);
 
-         // TODO: write check for status not to be paid
          if (record != null) {
+             // check for part repair status not to be completed
+            if (!record.getValue(HASPARTS.REPAIRSTATUS).equals(PartStatus.COMPLETE)) {
 
-             /*final Record recordOrder = database.select(
-                     ORDERS.ORDERNUM.cast(Integer.class),
-                     ORDERS.ORDERSTATUS.cast(String.class)
-             )
-                     .from(ORDERS)
-                     .where(ORDERS.ORDERNUM.equal(record.getValue(HASPARTS.PORDERNUM, Integer.class)))
-                     .fetchOne();*/
+                // updating status
 
-             // updating status
-             if (part.repairStatus == null) {
-                 database.update(HASPARTS)
-                         .set(HASPARTS.REPAIRSTATUS,record.getValue(HASPARTS.REPAIRSTATUS, String.class))
-                         .where(HASPARTS.PARTNUM.equal(part.partNumber))
-                         .execute();
-                 System.out.println("Part #" + part.partNumber + " same status");
-             } else {
-                 database.update(HASPARTS)
-                         .set(HASPARTS.REPAIRSTATUS,part.repairStatus)
-                         .where(HASPARTS.PARTNUM.equal(part.partNumber))
-                         .execute();
-                 System.out.println("Part #" + part.partNumber + " new status");
+                if (part.repairStatus == null) {
+                    database.update(HASPARTS)
+                            .set(HASPARTS.REPAIRSTATUS, record.getValue(HASPARTS.REPAIRSTATUS, String.class))
+                            .where(HASPARTS.PARTNUM.equal(part.partNumber))
+                            .execute();
+                    System.out.println("Part #" + part.partNumber + " same status");
+                } else {
+                    database.update(HASPARTS)
+                            .set(HASPARTS.REPAIRSTATUS, part.repairStatus)
+                            .where(HASPARTS.PARTNUM.equal(part.partNumber))
+                            .execute();
+                    System.out.println("Part #" + part.partNumber + " new status");
 
-                 //TODO: add check for all parts in order have "Complete" => update order status to complete
-             }
+                    //check for all parts in order have "Complete" => update order status to "Complete"
 
-             // updating repair cost
-             if (part.repairCost == null) {
-                 database.update(HASPARTS)
-                         .set(HASPARTS.REPAIRCOST,record.getValue(HASPARTS.REPAIRCOST, Double.class))
-                         .where(HASPARTS.PARTNUM.equal(part.partNumber))
-                         .execute();
-                 System.out.println("Part #" + part.partNumber + " same cost");
-             } else {
-                 database.update(HASPARTS)
-                         .set(HASPARTS.REPAIRCOST,part.repairCost)
-                         .where(HASPARTS.PARTNUM.equal(part.partNumber))
-                         .execute();
-                 System.out.println("Part #" + part.partNumber + " new cost");
+                    database.fetch("UPDATE orders SET orderStatus = CASE " +
+                            "WHEN (SELECT COUNT(*) FROM hasParts WHERE porderNum = ?) = " +
+                            "(SELECT COUNT(*) FROM hasParts WHERE porderNum = ? AND repairStatus = ?) " +
+                            "THEN ? ELSE ? END " +
+                            "WHERE orderNum = ?", ordNum, ordNum, PartStatus.COMPLETE, OrderStatus.COMPLETE, OrderStatus.IN_PROGRESS, ordNum)
+                            .format();
+                }
 
-             }
+                // updating repair cost
 
-             // updating sell price
-             if (part.sellPrice == null) {
-                 database.update(HASPARTS)
-                         .set(HASPARTS.SELLPRICE,record.getValue(HASPARTS.SELLPRICE, Double.class))
-                         .where(HASPARTS.PARTNUM.equal(part.partNumber))
-                         .execute();
-                 System.out.println("Part #" + part.partNumber + " same sell price");
-             } else {
-                 database.update(HASPARTS)
-                         .set(HASPARTS.SELLPRICE,part.sellPrice)
-                         .where(HASPARTS.PARTNUM.equal(part.partNumber))
-                         .execute();
-                 System.out.println("Part #" + part.partNumber + " new sell price");
+                if (part.repairCost == null) {
+                    database.update(HASPARTS)
+                            .set(HASPARTS.REPAIRCOST, record.getValue(HASPARTS.REPAIRCOST, Double.class))
+                            .where(HASPARTS.PARTNUM.equal(part.partNumber))
+                            .execute();
+                    System.out.println("Part #" + part.partNumber + " same cost");
+                } else {
+                    // check that status is Placed
+                    if (record.getValue(HASPARTS.REPAIRSTATUS).equals(PartStatus.PLACED)) {
+                        database.update(HASPARTS)
+                                .set(HASPARTS.REPAIRCOST, part.repairCost)
+                                .where(HASPARTS.PARTNUM.equal(part.partNumber))
+                                .execute();
+                        System.out.println("Part #" + part.partNumber + " new cost");
+                    } else {
+                        return "Part #" + part.partNumber + " can't update price, because contract is signed";
+                    }
+                }
 
-                 // update Order price = part_sell_price*qty
+                // updating sell price
 
-                 database.fetch("UPDATE orders SET totalPrice = (SELECT ROUND(sum(sellPrice * qty), 2) FROM hasParts WHERE porderNum = ?) WHERE orderNum = ?", ordNum, ordNum)
-                         .format();
-             }
+                if (part.sellPrice == null) {
+                    database.update(HASPARTS)
+                            .set(HASPARTS.SELLPRICE, record.getValue(HASPARTS.SELLPRICE, Double.class))
+                            .where(HASPARTS.PARTNUM.equal(part.partNumber))
+                            .execute();
+                    System.out.println("Part #" + part.partNumber + " same sell price");
+                } else {
+                    // check that status is Placed
+                    if (record.getValue(HASPARTS.REPAIRSTATUS).equals(PartStatus.PLACED)) {
+                        database.update(HASPARTS)
+                                .set(HASPARTS.SELLPRICE, part.sellPrice)
+                                .where(HASPARTS.PARTNUM.equal(part.partNumber))
+                                .execute();
 
-             // updating repair date
-             if (part.repairDate == null) {
-                 database.update(HASPARTS)
-                         .set(HASPARTS.REPAIRDATE,record.getValue(HASPARTS.REPAIRDATE))
-                         .where(HASPARTS.PARTNUM.equal(part.partNumber))
-                         .execute();
-                 System.out.println("Part #" + part.partNumber + " same repair date");
-             } else {
-                 database.update(HASPARTS)
-                         .set(HASPARTS.REPAIRDATE,part.repairDate)
-                         .where(HASPARTS.PARTNUM.equal(part.partNumber))
-                         .execute();
-                 System.out.println("Part #" + part.partNumber + " new repair date");
+                        // update Order price = part_sell_price*qty
 
-                 // TODO: update Order repair date = max repair date for all parts
-             }
+                        database.fetch("UPDATE orders SET totalPrice = (SELECT ROUND(sum(sellPrice * qty), 2) FROM hasParts WHERE porderNum = ?) WHERE orderNum = ?", ordNum, ordNum)
+                                .format();
 
-             return "Part #" + part.partNumber + " updated";
+                        System.out.println("Part #" + part.partNumber + " new sell price");
+
+                    } else {
+
+                        return "Part #" + part.partNumber + " can't update price, because contract is signed";
+                    }
+                }
+
+                // updating repair date
+
+                if (part.repairDate == null) {
+                    database.update(HASPARTS)
+                            .set(HASPARTS.REPAIRDATE, record.getValue(HASPARTS.REPAIRDATE))
+                            .where(HASPARTS.PARTNUM.equal(part.partNumber))
+                            .execute();
+                    System.out.println("Part #" + part.partNumber + " same repair date");
+                } else {
+                    database.update(HASPARTS)
+                            .set(HASPARTS.REPAIRDATE, part.repairDate)
+                            .where(HASPARTS.PARTNUM.equal(part.partNumber))
+                            .execute();
+                    System.out.println("Part #" + part.partNumber + " new repair date");
+
+                    // update Order repair date = max repair date for all parts
+
+                    database.fetch("UPDATE orders SET orderRepairDate = (SELECT MAX(repairDate) FROM hasParts WHERE porderNum = ?) WHERE orderNum = ?", ordNum, ordNum)
+                            .format();
+                }
+
+                return "Part #" + part.partNumber + " updated";
+            } return "Part #" + part.partNumber + " already completed";
          } else {
              return "Part #" + part.partNumber + " doesn't exist";
          }
-
-
-         /*final HASPARTSPROJECTION partProjection = database.update(HASPARTS)
-
-                 .set(HASPARTS.REPAIRCOST,part.repairCost)
-                 .set(HASPARTS.SELLPRICE, part.sellPrice)
-                 .set(HASPARTS.REPAIRDATE,part.repairDate)
-                 .where(HASPARTS.PARTNUM.equal(part.partNumber))
-                 .returning()
-                 .fetchOne()
-                 .into(HASPARTSPROJECTION.class);
-
-         if (partProjection.REPAIRCOST() != null &&
-                 partProjection.SELLPRICE() != null &&
-                 partProjection.REPAIRDATE() != null) {
-             database.update(HASPARTS)
-                     .set(HASPARTS.REPAIRSTATUS, PartStatus.IN_PROGRESS)
-                     .where(HASPARTS.PORDERNUM.equal(partProjection.PORDERNUM()));
-         }*/
 
      }
 
@@ -188,6 +189,7 @@ public class PartsResourse {
                 .fetchOne();
 
         if (record != null) {
+            final int ordNum = record.getValue(HASPARTS.PORDERNUM, Integer.class);
             if (record.getValue(HASPARTS.REPAIRSTATUS, String.class).equals(PartStatus.PLACED)) {
                 try {
                     database.delete(HASPARTS)
@@ -211,7 +213,9 @@ public class PartsResourse {
                             .where(ORDERS.ORDERNUM.equal(record.getValue(HASPARTS.PORDERNUM, Integer.class)))
                             .execute();
                 } else {
-                    // TODO: update price for order
+                    // update price for order
+                    database.fetch("UPDATE orders SET totalPrice = (SELECT ROUND(sum(sellPrice * qty), 2) FROM hasParts WHERE porderNum = ?) WHERE orderNum = ?", ordNum, ordNum)
+                            .format();
                 }
 
                 return "Part #" + id + " deleted";

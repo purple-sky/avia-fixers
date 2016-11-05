@@ -115,9 +115,16 @@ public class OrdersResourse {
                     .set(ORDERS.ORDERSTATUS, order.status)
                     .where(ORDERS.ORDERNUM.equal(id))
                     .execute();
-            return "Order #" + id + " updated";
 
-            // TODO: update parts' status when order status is changed to "InProgress"
+            // updates parts' status when Order status is changed to "InProgress"
+
+            if (order.status.equals(OrderStatus.IN_PROGRESS)) {
+                database.update(HASPARTS)
+                        .set(HASPARTS.REPAIRSTATUS, PartStatus.IN_PROGRESS)
+                        .where(HASPARTS.PORDERNUM.equal(id))
+                        .execute();
+            }
+            return "Order #" + id + " updated";
         }
 
         return "Order doesn't exist";
