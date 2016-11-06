@@ -1,15 +1,17 @@
 package com.aviafix;
 
+import com.aviafix.health.TemplateHealthCheck;
+import com.aviafix.resources.ElectronicPaymentResource;
+import com.aviafix.resources.FixerResource;
 import com.aviafix.resources.OrdersResourse;
 import com.aviafix.resources.PartsResourse;
-import com.aviafix.resources.ElectronicPaymentResource;
-import com.bendb.dropwizard.jooq.*;
+import com.bendb.dropwizard.jooq.JooqBundle;
+import com.bendb.dropwizard.jooq.JooqFactory;
 import io.dropwizard.Application;
-import io.dropwizard.db.*;
+import io.dropwizard.assets.AssetsBundle;
+import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-import com.aviafix.resources.FixerResource;
-import com.aviafix.health.TemplateHealthCheck;
 
 
 public class FixerApplication extends Application<FixerConfiguration> {
@@ -38,6 +40,8 @@ public class FixerApplication extends Application<FixerConfiguration> {
                 return configuration.getJooqFactory();
             }
         });
+
+        bootstrap.addBundle(new AssetsBundle("/assets", "/", "index.html"));
     }
 
     @Override

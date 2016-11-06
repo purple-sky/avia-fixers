@@ -30,6 +30,11 @@
             <version>${dropwizard.version}</version>
         </dependency>
         <dependency>
+            <groupId>io.dropwizard</groupId>
+            <artifactId>dropwizard-assets</artifactId>
+            <version>${dropwizard.version}</version>
+        </dependency>
+        <dependency>
             <groupId>com.bendb.dropwizard</groupId>
             <artifactId>dropwizard-jooq</artifactId>
             <version>1.0.0-2</version>
@@ -108,7 +113,7 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
+            <!--<plugin>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>2.10.3</version>
                 <executions>
@@ -119,7 +124,7 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
+            </plugin>-->
             <plugin>
                 <groupId>org.jooq</groupId>
                 <artifactId>jooq-codegen-maven</artifactId>
@@ -345,7 +350,7 @@
         </plugins>
     </build>
 
-    <reporting>
+    <!--<reporting>
         <plugins>
             <plugin>
                 <artifactId>maven-project-info-reports-plugin</artifactId>
@@ -360,5 +365,5 @@
                 <version>2.10.3</version>
             </plugin>
         </plugins>
-    </reporting>
+    </reporting>-->
 </project>

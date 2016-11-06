@@ -1,27 +1,25 @@
 package com.aviafix.resources;
 
-import com.aviafix.api.OrderUpdateRepresentation;
+import com.aviafix.api.OrderReadRepresentation;
 import com.aviafix.api.OrderWriteRepresentation;
 import com.aviafix.api.PartsWriteRepresentation;
 import com.aviafix.core.OrderStatus;
 import com.aviafix.core.PartStatus;
 import com.codahale.metrics.annotation.Timed;
-import io.dropwizard.jersey.params.IntParam;
 import org.jooq.DSLContext;
-import org.jooq.Name;
 import org.jooq.Record;
-import org.jooq.impl.DSL;
-import org.jooq.util.postgres.PostgresDataType;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.net.URI;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
-import static com.aviafix.db.generated.tables.ORDERS.ORDERS;
 import static com.aviafix.db.generated.tables.HASPARTS.HASPARTS;
+import static com.aviafix.db.generated.tables.ORDERS.ORDERS;
 
 
 @Path("/orders")
@@ -32,13 +30,23 @@ public class OrdersResourse {
     // gets all orders
     @GET
     @Timed
-    public String getOrders(
+    public List<OrderReadRepresentation> getOrders(
             @Context DSLContext database
     ) {
-        return database.select()
-                .from(ORDERS)
-                .fetch()
-                .format();
+        return database.selectFrom(ORDERS)
+                       .fetchInto(ORDERS)
+                       .stream()
+                       .map(order ->
+                               new OrderReadRepresentation(
+                                       order.ORDERNUM(),
+                                       order.DATE(),
+                                       order.ORDERSTATUS(),
+                                       order.ORDERREPAIRDATE(),
+                                       order.ORDERCID(),
+                                       order.TOTALPRICE()
+                               )
+                       )
+                       .collect(Collectors.toList());
     }
 
     // Create a new order
