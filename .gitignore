@@ -8,8 +8,8 @@
 *.war
 *.ear
 .idea/
-app/target/
-target/
+app/target
+target
 app/config.yml
 config.yml
 *.iml

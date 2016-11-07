@@ -1,5 +1,13 @@
-<p>This is the partial for view 2.</p>
-<p>
-  Showing of 'interpolate' filter:
-  {{ 'Current version is v%VERSION%.' | interpolate }}
-</p>
+<h2>Enter your order:</h2>
+<form novalidate class="form">
+    <div class="form-group" ng-repeat="i in parts track by $index">
+        <div class="input-group">
+            <input type="text" ng-model="parts[$index].name" placeholder="PartName" />
+            <input type="number" ng-model="parts[$index].qtty" placeholder="QTTY" />
+        </div>
+    </div>
+    <button class="btn btn-default" type="button" ng-click="addPart()">Add more parts</button>
+    <br />
+    <button class="btn btn-default" type="submit" ng-click="submitOrder()">Save Order</button>
+    <div ng-repeat="part in parts"><span ng-bind="part.name"></span> || <span ng-bind="part.qtty"></span></div>
+</form>

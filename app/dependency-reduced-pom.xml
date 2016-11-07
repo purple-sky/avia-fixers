@@ -186,6 +186,7 @@
     <dropwizard.version>1.0.2</dropwizard.version>
     <mainClass>com.aviafix.FixerApplication</mainClass>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <jackson.version>2.8.4</jackson.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 </project>

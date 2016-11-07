@@ -14,6 +14,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.net.URI;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -64,7 +65,7 @@ public class OrdersResourse {
                 ORDERS.ORDERSTATUS,
                 ORDERS.ORDERCID
         ).values(
-                order.date,
+                LocalDate.now(),
                 Optional.ofNullable(order.status).orElse(OrderStatus.PLACED),
                 order.customerId
         ).returning(

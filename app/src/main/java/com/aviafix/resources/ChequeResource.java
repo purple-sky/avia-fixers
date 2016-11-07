@@ -32,6 +32,7 @@ public class ChequeResource {
     //no put (no update)
     //no delete (cannot directly delete a cheque)
 
+    int orderID;
 
     @GET
     @Timed
@@ -91,13 +92,32 @@ public class ChequeResource {
         ).execute();
 
         final int orderID = cheque.orNumpayOffline;
+        this.orderID = orderID;
 
         /*
         PUT:
         don't think about record
         update order status //OrderStatus.PAID
         */
+        return Response.created(
+                URI.create(
+                        "cheque/" + CHEQUENUM)/*database
+                        .select(DSL.max(DSL.field("orderNum", int.class)))
+                        .from(DSL.table("orders"))
+                        .fetchOne(0, int.class)
+                )*/
+        ).build();
+    }
 
+    @PUT
+    @Timed
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response updateCheque(
+            @Context DSLContext database,
+            ChequeWriteRepresentation cheque
+    ) {
+
+        // Check if order exists in DB
         Record record2 = database.select(
                 ORDERS.ORDERNUM,
                 ORDERS.ORDERCID,
@@ -116,13 +136,17 @@ public class ChequeResource {
 
         return Response.created(
                 URI.create(
-                        "cheque/" + CHEQUENUM)/*database
+                        "order/" + orderID)/*database
                         .select(DSL.max(DSL.field("orderNum", int.class)))
                         .from(DSL.table("orders"))
                         .fetchOne(0, int.class)
                 )*/
         ).build();
+
     }
+
+
+
 
     /*
     Delete Not Needed

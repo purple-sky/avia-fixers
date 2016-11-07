@@ -7,6 +7,10 @@ import com.aviafix.resources.OrdersResourse;
 import com.aviafix.resources.PartsResourse;
 import com.bendb.dropwizard.jooq.JooqBundle;
 import com.bendb.dropwizard.jooq.JooqFactory;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JSR310Module;
 import io.dropwizard.Application;
 import io.dropwizard.assets.AssetsBundle;
 import io.dropwizard.db.DataSourceFactory;
@@ -47,6 +51,10 @@ public class FixerApplication extends Application<FixerConfiguration> {
     @Override
     public void run(final FixerConfiguration configuration,
                     final Environment environment) {
+
+        // Serialization Configuration
+        FixerApplication.configureMapper(environment.getObjectMapper());
+
         // TODO: implement application
         final FixerResource resource = new FixerResource(
                 configuration.getTemplate(),
@@ -66,6 +74,13 @@ public class FixerApplication extends Application<FixerConfiguration> {
         environment.jersey().register(partsResourse);
         environment.jersey().register(electronicPaymentResource);
 
+    }
+
+    public static ObjectMapper configureMapper(final ObjectMapper mapper){
+        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+        mapper.registerModule(new JSR310Module());
+        return mapper;
     }
 
 }

@@ -26,6 +26,7 @@
 /Users/vb/Documents/workspace/avia-fixers/app/src/main/java/com/aviafix/db/generated/tables/pojos/ORDERSPROJECTION.java
 /Users/vb/Documents/workspace/avia-fixers/app/src/main/java/com/aviafix/db/generated/tables/records/PAYBYCREDITCARDRECORD.java
 /Users/vb/Documents/workspace/avia-fixers/app/src/main/java/com/aviafix/db/generated/tables/REPAIRSHOP_EMPLOYEES.java
+/Users/vb/Documents/workspace/avia-fixers/app/src/main/java/com/aviafix/api/OrderReadRepresentation.java
 /Users/vb/Documents/workspace/avia-fixers/app/src/main/java/com/aviafix/core/PartStatus.java
 /Users/vb/Documents/workspace/avia-fixers/app/src/main/java/com/aviafix/db/generated/tables/PAYBYCHEQUE.java
 /Users/vb/Documents/workspace/avia-fixers/app/src/main/java/com/aviafix/api/OrderUpdateRepresentation.java
@@ -35,6 +36,7 @@
 /Users/vb/Documents/workspace/avia-fixers/app/src/main/java/com/aviafix/db/generated/tables/FINANCEOFFICE_EMPLOYEES.java
 /Users/vb/Documents/workspace/avia-fixers/app/src/main/java/com/aviafix/db/generated/tables/pojos/FINANCEOFFICE_EMPLOYEESPROJECTION.java
 /Users/vb/Documents/workspace/avia-fixers/app/src/main/java/com/aviafix/db/generated/tables/pojos/PAYOFFLINEPROJECTION.java
+/Users/vb/Documents/workspace/avia-fixers/app/src/main/java/com/aviafix/resources/ChequeResource.java
 /Users/vb/Documents/workspace/avia-fixers/app/src/main/java/com/aviafix/core/OrderStatus.java
 /Users/vb/Documents/workspace/avia-fixers/app/src/main/java/com/aviafix/db/generated/tables/EMPLOYEE_USERS.java
 /Users/vb/Documents/workspace/avia-fixers/app/src/main/java/com/aviafix/db/generated/tables/records/PAYONLINERECORD.java
@@ -45,6 +47,7 @@
 /Users/vb/Documents/workspace/avia-fixers/app/src/main/java/com/aviafix/db/generated/tables/records/FINANCEOFFICE_EMPLOYEESRECORD.java
 /Users/vb/Documents/workspace/avia-fixers/app/src/main/java/com/aviafix/db/generated/tables/records/CUSTOMER_USERSRECORD.java
 /Users/vb/Documents/workspace/avia-fixers/app/src/main/java/com/aviafix/db/generated/DefaultCatalog.java
+/Users/vb/Documents/workspace/avia-fixers/app/src/main/java/com/aviafix/api/ChequeWriteRepresentation.java
 /Users/vb/Documents/workspace/avia-fixers/app/src/main/java/com/aviafix/db/generated/tables/records/HASPARTSRECORD.java
 /Users/vb/Documents/workspace/avia-fixers/app/src/main/java/com/aviafix/db/generated/tables/records/ORDERSRECORD.java
 /Users/vb/Documents/workspace/avia-fixers/app/src/main/java/com/aviafix/db/generated/tables/records/EMPLOYEE_USERSRECORD.java

@@ -13,10 +13,12 @@ com/aviafix/db/generated/tables/pojos/PAYBYCHEQUEPROJECTION.class
 com/aviafix/db/generated/tables/records/HASPARTSRECORD.class
 com/aviafix/db/generated/tables/CUSTOMER_USERS.class
 com/aviafix/db/generated/tables/records/USRNAME_PASSRECORD.class
+com/aviafix/api/ChequeWriteRepresentation.class
 com/aviafix/db/generated/tables/REPAIRSHOP_EMPLOYEES.class
 com/aviafix/api/OrderReadRepresentation.class
 com/aviafix/api/OrderUpdateRepresentation.class
 com/aviafix/db/generated/DefaultCatalog.class
+com/aviafix/resources/ChequeResource.class
 com/aviafix/db/generated/Keys$ForeignKeys0.class
 com/aviafix/api/PartsUpdateRepresentation.class
 com/aviafix/db/generated/tables/PAYOFFLINE.class
