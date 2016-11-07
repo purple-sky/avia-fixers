@@ -1,10 +1,7 @@
 package com.aviafix.resources;
 
 import com.aviafix.api.ChequeWriteRepresentation;
-import com.aviafix.api.OrderWriteRepresentation;
 import com.aviafix.core.OrderStatus;
-import com.aviafix.db.generated.tables.PAYBYCREDITCARD;
-import com.aviafix.db.generated.tables.PAYOFFLINE;
 import com.codahale.metrics.annotation.Timed;
 import org.jooq.DSLContext;
 import org.jooq.Record;
@@ -32,7 +29,6 @@ public class ChequeResource {
     //no put (no update)
     //no delete (cannot directly delete a cheque)
 
-    int orderID;
 
     @GET
     @Timed
@@ -53,102 +49,66 @@ public class ChequeResource {
     @POST
     @Timed
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response postOrder(
+    public Response postCheque(
             @Context DSLContext database,
-
             ChequeWriteRepresentation cheque
     ) {
 
-        Record record = database.insertInto(
-                PAYBYCHEQUE,
-                PAYBYCHEQUE.AMOUNT,
-                PAYBYCHEQUE.BANK,
-                PAYBYCHEQUE.CHEQUENUM
-        ).values(
+        final Record orderRecord = database.select(ORDERS.ORDERNUM, ORDERS.ORDERSTATUS)
+                .from(ORDERS)
+                .where(ORDERS.ORDERNUM.equal(cheque.orderNumber))
+                .fetchOne();
 
-                cheque.amount,
-                cheque.bank,
-                cheque.chequeNum
-        ).returning(
-                PAYBYCHEQUE.CHEQUENUM
-        ).fetchOne();
+        if (orderRecord != null && orderRecord.getValue(ORDERS.ORDERSTATUS, String.class).equals(OrderStatus.COMPLETE)) {
 
-        final int CHEQUENUM = record.getValue(PAYBYCHEQUE.CHEQUENUM);
+            database.insertInto(
+                    PAYBYCHEQUE,
+                    PAYBYCHEQUE.CHEQUENUM,
+                    PAYBYCHEQUE.BANK,
+                    PAYBYCHEQUE.AMOUNT
+            ).values(
+                    cheque.chequeNumber,
+                    cheque.bank,
+                    cheque.amount
+            ).execute();
 
+            database.insertInto(
+                    PAYOFFLINE,
+                    PAYOFFLINE.CIDPAYOFFLINE,
+                    PAYOFFLINE.CQNUMPAYOFFLINE,
+                    PAYOFFLINE.ORNUMPAYOFFLINE,
+                    PAYOFFLINE.FEIDPAYOFFLINE,
+                    PAYOFFLINE.PYMNTDATEPAYOFFLINE
+            ).values(
+                    cheque.customerId,
+                    cheque.chequeNumber,
+                    cheque.orderNumber,
+                    cheque.financeEmployeeId,
+                    cheque.date
+            ).execute();
 
-        database.insertInto(
-                PAYOFFLINE,
-                PAYOFFLINE.CIDPAYOFFLINE,
-                PAYOFFLINE.CQNUMPAYOFFLINE,
-                PAYOFFLINE.FEIDPAYOFFLINE,
-                PAYOFFLINE.ORNUMPAYOFFLINE,
-                PAYOFFLINE.PYMNTDATEPAYOFFLINE
-        ).values(
-                cheque.cidpayOffline,
-                cheque.orNumpayOffline,
-                cheque.cqNumpayOffline,
-                cheque.feidpayOffline,
-                cheque.pymntDatepayOffline
-        ).execute();
-
-        final int orderID = cheque.orNumpayOffline;
-        this.orderID = orderID;
+            database.update(ORDERS)
+                    .set(ORDERS.ORDERSTATUS, OrderStatus.PAID)
+                    .where(ORDERS.ORDERNUM.equal(cheque.orderNumber))
+                    .execute();
 
         /*
         PUT:
         don't think about record
         update order status //OrderStatus.PAID
         */
-        return Response.created(
-                URI.create(
-                        "cheque/" + CHEQUENUM)/*database
-                        .select(DSL.max(DSL.field("orderNum", int.class)))
-                        .from(DSL.table("orders"))
-                        .fetchOne(0, int.class)
-                )*/
-        ).build();
-    }
+            return Response.created(
+                    URI.create("cheque/" + cheque.chequeNumber))
+                    .build();
 
-    @PUT
-    @Timed
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateCheque(
-            @Context DSLContext database,
-            ChequeWriteRepresentation cheque
-    ) {
-
-        // Check if order exists in DB
-        Record record2 = database.select(
-                ORDERS.ORDERNUM,
-                ORDERS.ORDERCID,
-                ORDERS.ORDERSTATUS
-        )
-                .from(ORDERS)
-                .where(ORDERS.ORDERNUM.equal(orderID), ORDERS.ORDERSTATUS.equal(OrderStatus.COMPLETE))
-                .fetchOne();
-
-        if (record2 != null) {
-            database.update(ORDERS)
-                    .set(ORDERS.ORDERSTATUS, OrderStatus.PAID)
-                    .where(ORDERS.ORDERNUM.equal(orderID))
-                    .execute();
         }
-
         return Response.created(
                 URI.create(
-                        "order/" + orderID)/*database
-                        .select(DSL.max(DSL.field("orderNum", int.class)))
-                        .from(DSL.table("orders"))
-                        .fetchOne(0, int.class)
-                )*/
-        ).build();
-
+                        "orders/error"))
+                .build();
     }
-
-
-
 
     /*
-    Delete Not Needed
+    Put, Delete Not Needed
     */
 }

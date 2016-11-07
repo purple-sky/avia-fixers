@@ -1,10 +1,7 @@
 package com.aviafix;
 
 import com.aviafix.health.TemplateHealthCheck;
-import com.aviafix.resources.ElectronicPaymentResource;
-import com.aviafix.resources.FixerResource;
-import com.aviafix.resources.OrdersResourse;
-import com.aviafix.resources.PartsResourse;
+import com.aviafix.resources.*;
 import com.bendb.dropwizard.jooq.JooqBundle;
 import com.bendb.dropwizard.jooq.JooqFactory;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -64,6 +61,7 @@ public class FixerApplication extends Application<FixerConfiguration> {
         final OrdersResourse ordersResourse = new OrdersResourse();
         final PartsResourse partsResourse = new PartsResourse();
         final ElectronicPaymentResource electronicPaymentResource = new ElectronicPaymentResource();
+        final ChequeResource chequeResource = new ChequeResource();
 
         final TemplateHealthCheck healthCheck =
                 new TemplateHealthCheck(configuration.getTemplate());
@@ -73,6 +71,7 @@ public class FixerApplication extends Application<FixerConfiguration> {
         environment.jersey().register(ordersResourse);
         environment.jersey().register(partsResourse);
         environment.jersey().register(electronicPaymentResource);
+        environment.jersey().register(chequeResource);
 
     }
 
