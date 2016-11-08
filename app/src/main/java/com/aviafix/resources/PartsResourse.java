@@ -1,8 +1,6 @@
 package com.aviafix.resources;
 
-import com.aviafix.api.OrderWriteRepresentation;
-import com.aviafix.api.PartsUpdateRepresentation;
-import com.aviafix.api.PartsWriteRepresentation;
+import com.aviafix.api.*;
 import com.aviafix.core.OrderStatus;
 import com.aviafix.core.PartStatus;
 import com.aviafix.db.generated.tables.HASPARTS;
@@ -18,6 +16,7 @@ import javax.ws.rs.core.Response;
 import java.net.URI;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.aviafix.db.generated.tables.ORDERS.ORDERS;
 import static com.aviafix.db.generated.tables.HASPARTS.HASPARTS;
@@ -35,13 +34,25 @@ public class PartsResourse {
 
     @GET
     @Timed
-    public String getParts(
+    public List<PartsReadRepresentation> getParts(
             @Context DSLContext database
     ) {
-        return database.select()
-                .from(HASPARTS)
-                .fetch()
-                .format();
+        return database.selectFrom(HASPARTS)
+                .fetchInto(HASPARTS)
+                .stream()
+                .map(part ->
+                        new PartsReadRepresentation(
+                                part.PARTNUM(),
+                                part.PARTNAME(),
+                                part.REPAIRSTATUS(),
+                                part.REPAIRCOST(),
+                                part.SELLPRICE(),
+                                part.REPAIRDATE(),
+                                part.PORDERNUM(),
+                                part.QTY()
+                        )
+                )
+                .collect(Collectors.toList());
     }
 
      @PUT

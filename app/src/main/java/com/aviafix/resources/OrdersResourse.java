@@ -18,6 +18,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.aviafix.db.generated.tables.HASPARTS.HASPARTS;
 import static com.aviafix.db.generated.tables.ORDERS.ORDERS;
@@ -48,6 +49,19 @@ public class OrdersResourse {
                                )
                        )
                        .collect(Collectors.toList());
+    }
+
+    @GET
+    @Path("/{id}")
+    @Timed
+    public Stream<OrderReadRepresentation> getOrder(
+            @Context DSLContext database,
+            @PathParam("id") int id
+    ) {
+        return database.selectFrom(ORDERS)
+                .where(ORDERS.ORDERNUM.equal(id))
+                .fetchInto(OrderReadRepresentation.class)
+                .stream();
     }
 
     // Create a new order

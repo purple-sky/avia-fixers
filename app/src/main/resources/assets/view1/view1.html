@@ -5,6 +5,7 @@
     <tbody>
     <tr ng-repeat="order in orders">
         <td ng-bind="order.id"></td><td ng-bind="order.date"></td><td ng-bind="order.status"></td><td ng-bind="order.repairDate"></td><td ng-bind="order.customerId"></td><td ng-bind="order.totalPrice"></td>
+        <td><button class="btn btn-default" type="button" ng-click="viewOrder()">View</button></td>
     </tr>
     </tbody>
 </table>
