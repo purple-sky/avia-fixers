@@ -9,8 +9,12 @@ angular.module('myApp.viewParts', ['ngRoute'])
     });
 }])
 
-.controller('ViewPartsCtrl', ['$scope', '$http',function($scope, $http) {
+.controller('ViewPartsCtrl', ['$scope', '$http', '$location', function($scope, $http, $location) {
     $scope.parts = [];
+
+    $scope.updatePart = function (id) {
+            $location.path('/viewPart/:' + id);
+        }
 
     $http
         .get('/api/parts')

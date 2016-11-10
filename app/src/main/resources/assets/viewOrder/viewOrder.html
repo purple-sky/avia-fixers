@@ -1,9 +1,16 @@
+<h2>Your order
+    <span
+        ng-bind="id">
+    </span>
+
+</h2>
+
 <table class="table table-bordered table-striped">
     <thead>
     <tr><td>Part Number</td><td>Part Name</td><td>Repair Status</td><td>Repair Cost</td><td>Sell Price</td><td>Repair Date</td><td>Order Number</td><td>Quantity</td></tr>
     </thead>
     <tbody>
-    <tr ng-repeat="part in parts">
+    <tr ng-repeat="part in order">
         <td ng-bind="part.partNumber"></td>
         <td ng-bind="part.name"></td>
         <td ng-bind="part.repairStatus"></td>
@@ -12,7 +19,11 @@
         <td ng-bind="part.repairDate"></td>
         <td ng-bind="part.orderNumber"></td>
         <td ng-bind="part.qtty"></td>
-        <td><button class="btn btn-default" type="button" ng-click="updatePart(part.partNumber)">Update</button></td>
+        <td><button class="btn btn-default" type="button" ng-click="updatePart(part.partNumber)">View</button></td>
     </tr>
     </tbody>
 </table>
+<button class="btn btn-default" type="button" ng-click="acceptOrder(id)">Accept Order</button>
+<button class="btn btn-default" type="button" ng-click="onlinePayment(id)">Online Payment</button>
+<button class="btn btn-default" type="button" ng-click="offlinePayment(id)">Offline Payment</button>
+<button class="btn btn-default" type="button" ng-click="deleteOrder(id)">Delete Order</button>

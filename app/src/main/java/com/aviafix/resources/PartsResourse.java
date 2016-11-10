@@ -55,6 +55,31 @@ public class PartsResourse {
                 .collect(Collectors.toList());
     }
 
+    @GET
+    @Path("/:{id}")
+    @Timed
+    public PartsReadRepresentation getPart(
+            @Context DSLContext database,
+            @PathParam("id") Integer id
+    ) {
+        Record record = database.select()
+                .from(HASPARTS)
+                .where(HASPARTS.PARTNUM.equal(id))
+                .fetchOne();
+        return new PartsReadRepresentation(
+                record.getValue(HASPARTS.PARTNUM),
+                record.getValue(HASPARTS.PARTNAME, String.class),
+                record.getValue(HASPARTS.REPAIRSTATUS, String.class),
+                record.getValue(HASPARTS.REPAIRCOST, Double.class),
+                record.getValue(HASPARTS.SELLPRICE, Double.class),
+                record.getValue(HASPARTS.REPAIRDATE),
+                record.getValue(HASPARTS.PORDERNUM),
+                record.getValue(HASPARTS.QTY)
+        );
+
+
+    }
+
      @PUT
      @Timed
      @Consumes(MediaType.APPLICATION_JSON)

@@ -60,8 +60,17 @@ public class DemosResourse {
             @Context DSLContext database
     ) {
         //TODO : some aggregation query
-        return "Result";
+        //TODO: Count the number of hasPart with order number equals to 1
+        Result result = database.fetch("SELECT COUNT(*) FROM hasParts WHERE porderNum = 1");
+
+        String resultString = "";
+
+        for (Object r : result) {
+            resultString = resultString + r.toString();
+        }
+        return resultString;
     }
+
 
     @GET
     @Path("/demo4")
@@ -70,7 +79,21 @@ public class DemosResourse {
             @Context DSLContext database
     ) {
         //TODO : some nested aggregation query with GROUP BY
-        return "Result";
+        //TODO: show the average amount for the cheque paid of each bank in December 15th, 2014
+        Result result = database.fetch(
+                "SELECT bank, AVG(amount) " +
+                        "FROM payByCheque " +
+                        "WHERE chequeNum IN (SELECT cqNumpayOffline " +
+                        "FROM payOffline " +
+                        "WHERE pymntDatepayOffline = '2014-12-15') " +
+                        "GROUP BY bank");
+
+        String resultString = "";
+
+        for (Object r : result) {
+            resultString = resultString + r.toString();
+        }
+        return resultString;
     }
 
 }

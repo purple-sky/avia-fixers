@@ -2,6 +2,7 @@ package com.aviafix.resources;
 
 import com.aviafix.api.OrderReadRepresentation;
 import com.aviafix.api.OrderWriteRepresentation;
+import com.aviafix.api.PartsReadRepresentation;
 import com.aviafix.api.PartsWriteRepresentation;
 import com.aviafix.core.OrderStatus;
 import com.aviafix.core.PartStatus;
@@ -52,16 +53,29 @@ public class OrdersResourse {
     }
 
     @GET
-    @Path("/{id}")
+    @Path("/:{id}")
     @Timed
-    public Stream<OrderReadRepresentation> getOrder(
+    public List<PartsReadRepresentation> getOrder(
             @Context DSLContext database,
             @PathParam("id") int id
     ) {
-        return database.selectFrom(ORDERS)
-                .where(ORDERS.ORDERNUM.equal(id))
-                .fetchInto(OrderReadRepresentation.class)
-                .stream();
+        return database.selectFrom(HASPARTS)
+                .where(HASPARTS.PORDERNUM.equal(id))
+                .fetchInto(HASPARTS)
+                .stream()
+                .map(part ->
+                        new PartsReadRepresentation(
+                                part.PARTNUM(),
+                                part.PARTNAME(),
+                                part.REPAIRSTATUS(),
+                                part.REPAIRCOST(),
+                                part.SELLPRICE(),
+                                part.REPAIRDATE(),
+                                part.PORDERNUM(),
+                                part.QTY()
+                        )
+                )
+                .collect(Collectors.toList());
     }
 
     // Create a new order
@@ -116,7 +130,7 @@ public class OrdersResourse {
     }
 
     @PUT
-    @Path("/{id}")
+    @Path("/:{id}")
     @Timed
     public String updateOrder (
             @Context DSLContext database,
@@ -154,7 +168,7 @@ public class OrdersResourse {
     }
 
     @DELETE
-    @Path("/{id}")
+    @Path("/:{id}")
     public String deleteOrder (
             @Context DSLContext database,
             @PathParam("id") Integer id

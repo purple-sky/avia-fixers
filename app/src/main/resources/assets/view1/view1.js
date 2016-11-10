@@ -9,12 +9,12 @@ angular.module('myApp.view1', ['ngRoute'])
     });
 }])
 
-.controller('View1Ctrl', ['$scope', '$http',function($scope, $http) {
+.controller('View1Ctrl', ['$scope', '$http', '$location',function($scope, $http, $location) {
     $scope.orders = [];
 
-    //$scope.viewOrder = function () {
-    //    $window.location.href = "/api/viewParts";
-    //}
+    $scope.viewOrder = function (id) {
+        $location.path('/viewOrder/:' + id);
+    }
 
     $http
         .get('/api/orders')

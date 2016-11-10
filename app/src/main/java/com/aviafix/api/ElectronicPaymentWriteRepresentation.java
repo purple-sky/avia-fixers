@@ -18,14 +18,15 @@ public class ElectronicPaymentWriteRepresentation {
 
     @JsonCreator
     public ElectronicPaymentWriteRepresentation(
+            @JsonProperty("orderNumber") int orderNumber,
             @JsonProperty("creditCardNumber") int creditCardNumber,
             @JsonProperty("expiryDate") LocalDate expiryDate,
             @JsonProperty("cardCode") int cardCode,
             @JsonProperty("cardHolderName") String cardHolderName,
             @JsonProperty("paymentAmount") Double paymentAmount,
-            @JsonProperty("customerID") int customerID,
-            @JsonProperty("orderNumber") int orderNumber,
-            @JsonProperty("paymentDate") LocalDate paymentDate
+            @JsonProperty("customerID") int customerID
+
+            //@JsonProperty("paymentDate") LocalDate paymentDate
     ) {
 
         this.creditCardNumber = creditCardNumber;

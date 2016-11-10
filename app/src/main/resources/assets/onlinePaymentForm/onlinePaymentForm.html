@@ -1,0 +1,18 @@
+<h2>Enter your data to process with payment:</h2>
+
+<form novalidate class="form">
+    <div class="form-group" >
+        <div class="input-group">
+            <input type="number" ng-model="requisites.creditCardNumber" placeholder="Credit Card #" />
+            <input type="date" ng-model="requisites.expiryDate" placeholder="Exp Date" />
+            <input type="number" min="111" max="999" ng-model="requisites.cardCode" placeholder="CVV code" />
+            <input type="text" ng-model="requisites.cardHolderName" placeholder="Card Holder Name" />
+            <input type="number" ng-model="requisites.paymentAmount" placeholder="Payment Amount" />
+            <input type="number" ng-model="requisites.customerID" placeholder="Customer number" />
+
+        </div>
+    </div>
+    <br />
+    <button class="btn btn-default" type="submit" ng-click="submitEPayment()">Submit Payment</button>
+
+</form>
