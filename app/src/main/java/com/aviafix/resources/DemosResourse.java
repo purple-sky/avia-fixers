@@ -61,7 +61,7 @@ public class DemosResourse {
     ) {
         //TODO : some aggregation query
         //TODO: Count the number of hasPart with order number equals to 1
-        Result result = database.fetch("SELECT COUNT(*) FROM hasParts WHERE porderNum = 1");
+        Result result = database.fetch("SELECT COUNT(*) FROM hasParts WHERE porderNum = 31");
 
         String resultString = "";
 

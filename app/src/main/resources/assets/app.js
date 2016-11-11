@@ -11,6 +11,11 @@ angular.module('myApp', [
   'myApp.onlinePaymentForm',
   'myApp.offlinePaymentForm',
   'myApp.viewPart',
+  'myApp.viewPayments',
+  'myApp.viewOnlinePayments',
+  'myApp.viewOfflinePayments',
+  'myApp.viewOnlinePayment',
+  'myApp.viewOfflinePayment',
   'myApp.version'
 ]).
 config(['$locationProvider', '$routeProvider', function($locationProvider, $routeProvider) {

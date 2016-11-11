@@ -1,0 +1,30 @@
+<h2>Your cheque payment
+    <span
+        ng-bind="id">
+    </span>
+
+</h2>
+
+<table class="table table-bordered table-striped">
+    <thead>
+    <tr>
+        <td>Cheque #</td>
+        <td>Order #</td>
+        <td>Amount Paid</td>
+        <td>Customer ID</td>
+        <td>Payment Date</td>
+        <td>Responsible for transaction</td>
+        <td>Card Holder</td>
+    </tr>
+    </thead>
+    <tbody>
+    <tr ng-repeat="payment in cqpayments">
+        <td ng-bind="payment.chequeNumber"></td>
+        <td ng-bind="payment.orderNumber"></td>
+        <td ng-bind="payment.amount"></td>
+        <td ng-bind="payment.customerId"></td>
+        <td ng-bind="payment.date"></td>
+        <td ng-bind="payment.financeEmployeeId"></td>
+    </tr>
+    </tbody>
+</table>

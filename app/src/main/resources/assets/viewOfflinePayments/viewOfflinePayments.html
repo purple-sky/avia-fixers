@@ -1,0 +1,38 @@
+<h2>Your payments:</h2>
+
+<div class="btn-group">
+    <a type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        Sort by
+        <span class="caret"></span>
+    </a>
+    <ul class="dropdown-menu">
+        <li><a class="dropdown-item" href="#">None</a></li>
+        <li><a class="dropdown-item" href="#">By order ID</a></li>
+        <li><a class="dropdown-item" href="#">By customer #</a></li>
+        <li><a class="dropdown-item" href="#">By payment date</a></li>
+    </ul>
+</div>
+
+
+<table class="table table-bordered table-striped">
+    <thead>
+    <tr>
+        <td>Cheque #</td>
+        <td>Order #</td>
+        <td>Payment Date</td>
+        <td>Amount</td>
+        <td>Bank</td>
+    </thead>
+    <tbody>
+    <tr ng-repeat="payment in payments">
+        <td ng-bind="payment.chequeNumber"></td>
+        <td ng-bind="payment.orderNumber"></td>
+        <td ng-bind="payment.date"></td>
+        <td ng-bind="payment.amount"></td>
+        <td ng-bind="payment.bank"></td>
+        <td><button class="btn btn-default" type="button" ng-click="viewPayment(payment.chequeNumber)">View</button></td>
+    </tr>
+    </tbody>
+</table>
+
+

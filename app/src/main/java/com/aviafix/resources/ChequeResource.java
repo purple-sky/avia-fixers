@@ -1,6 +1,8 @@
 package com.aviafix.resources;
 
+import com.aviafix.api.ChequeReadRepresentation;
 import com.aviafix.api.ChequeWriteRepresentation;
+import com.aviafix.api.TotalPaymentRepresentation;
 import com.aviafix.core.OrderStatus;
 import com.codahale.metrics.annotation.Timed;
 import org.jooq.DSLContext;
@@ -11,10 +13,14 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.net.URI;
+import java.util.List;
 
 import static com.aviafix.db.generated.tables.ORDERS.ORDERS;
 import static com.aviafix.db.generated.tables.PAYBYCHEQUE.PAYBYCHEQUE;
+import static com.aviafix.db.generated.tables.PAYBYCREDITCARD.PAYBYCREDITCARD;
 import static com.aviafix.db.generated.tables.PAYOFFLINE.PAYOFFLINE;
+import static com.aviafix.db.generated.tables.PAYONLINE.PAYONLINE;
+import static org.jooq.impl.DSL.val;
 
 /**
  * Created by paull on 1/11/2016.
@@ -29,14 +35,38 @@ public class ChequeResource {
     //no put (no update)
     //no delete (cannot directly delete a cheque)
 
-
     @GET
     @Timed
-    public String getOrders(
+    public List<ChequeReadRepresentation> getOrders(
             @Context DSLContext database
+    ) {
+        List<ChequeReadRepresentation> representations = database.select(
+                PAYBYCHEQUE.CHEQUENUM,
+                PAYBYCHEQUE.BANK,
+                PAYBYCHEQUE.AMOUNT,
+                PAYOFFLINE.CIDPAYOFFLINE,
+                PAYOFFLINE.ORNUMPAYOFFLINE,
+                PAYOFFLINE.FEIDPAYOFFLINE,
+                PAYOFFLINE.PYMNTDATEPAYOFFLINE.as("DATE"))
+                .from(PAYBYCHEQUE)
+                .join(PAYOFFLINE)
+                .on(PAYBYCHEQUE.CHEQUENUM.equal(PAYOFFLINE.CQNUMPAYOFFLINE))
+                .fetchInto(ChequeReadRepresentation.class);
+
+        return representations;
+    }
+
+    // TODO: make return an object
+    @GET
+    @Path("/{id}")
+    @Timed
+    public String getEpayments(
+            @Context DSLContext database,
+            @PathParam("id") Integer id
     ) {
         return database.select()
                 .from(PAYBYCHEQUE)
+                .where(PAYBYCHEQUE.CHEQUENUM.equal(id))
                 .fetch()
                 .format();
     }

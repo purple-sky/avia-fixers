@@ -7,7 +7,17 @@
 
 <table class="table table-bordered table-striped">
     <thead>
-    <tr><td>Part Number</td><td>Part Name</td><td>Repair Status</td><td>Repair Cost</td><td>Sell Price</td><td>Repair Date</td><td>Order Number</td><td>Quantity</td></tr>
+    <tr><td>Part Number</td>
+        <td>Part Name</td>
+        <td>Repair Status</td>
+        <td>Repair Cost</td>
+        <td>Sell Price</td>
+        <td>Repair Date</td>
+        <td>Order Number</td>
+        <td>Quantity</td>
+        <td>View</td>
+        <td>Delete</td>
+    </tr>
     </thead>
     <tbody>
     <tr ng-repeat="part in order">
@@ -19,7 +29,8 @@
         <td ng-bind="part.repairDate"></td>
         <td ng-bind="part.orderNumber"></td>
         <td ng-bind="part.qtty"></td>
-        <td><button class="btn btn-default" type="button" ng-click="updatePart(part.partNumber)">View</button></td>
+        <td><button class="btn btn-default ttt" type="button" ng-click="updatePart(part.partNumber)">View</button></td>
+        <td><button class="btn btn-default" type="button" ng-click="deletePart(part.partNumber)">Delete</button></td>
     </tr>
     </tbody>
 </table>

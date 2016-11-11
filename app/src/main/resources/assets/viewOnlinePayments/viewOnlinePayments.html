@@ -1,0 +1,40 @@
+<h2>Your payments:</h2>
+
+<div class="btn-group">
+    <a type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        Sort by
+        <span class="caret"></span>
+    </a>
+    <ul class="dropdown-menu">
+        <li><a class="dropdown-item" href="#">None</a></li>
+        <li><a class="dropdown-item" href="#">By order ID</a></li>
+        <li><a class="dropdown-item" href="#">By customer #</a></li>
+        <li><a class="dropdown-item" href="#">By payment date</a></li>
+    </ul>
+</div>
+
+
+<table class="table table-bordered table-striped">
+    <thead>
+    <tr>
+        <td>ETID</td>
+        <td>Order #</td>
+        <td>Payment Date</td>
+        <td>Amount</td>
+        <td>Credit card #</td>
+        <td>Card Holder</td></tr>
+    </thead>
+    <tbody>
+    <tr ng-repeat="payment in payments">
+        <td ng-bind="payment.etid"></td>
+        <td ng-bind="payment.orderNumber"></td>
+        <td ng-bind="payment.paymentDate"></td>
+        <td ng-bind="payment.paymentAmount"></td>
+        <td ng-bind="payment.creditCardNumber"></td>
+        <td ng-bind="payment.cardHolderName"></td>
+        <td><button class="btn btn-default" type="button" ng-click="viewPayment(payment.etid)">View</button></td>
+    </tr>
+    </tbody>
+</table>
+
+

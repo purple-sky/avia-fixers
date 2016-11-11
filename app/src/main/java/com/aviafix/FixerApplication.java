@@ -63,6 +63,7 @@ public class FixerApplication extends Application<FixerConfiguration> {
         final ElectronicPaymentResource electronicPaymentResource = new ElectronicPaymentResource();
         final ChequeResource chequeResource = new ChequeResource();
         final DemosResourse demosResourse = new DemosResourse();
+        final TotalPaymentResourse totalPaymentResourse = new TotalPaymentResourse();
 
         final TemplateHealthCheck healthCheck =
                 new TemplateHealthCheck(configuration.getTemplate());
@@ -74,6 +75,7 @@ public class FixerApplication extends Application<FixerConfiguration> {
         environment.jersey().register(electronicPaymentResource);
         environment.jersey().register(chequeResource);
         environment.jersey().register(demosResourse);
+        environment.jersey().register(totalPaymentResourse);
 
     }
 

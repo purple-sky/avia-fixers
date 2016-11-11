@@ -12,11 +12,13 @@ com/aviafix/api/ChequeWriteRepresentation.class
 com/aviafix/db/generated/tables/REPAIRSHOP_EMPLOYEES.class
 com/aviafix/api/OrderReadRepresentation.class
 com/aviafix/db/generated/tables/PAYOFFLINE.class
+com/aviafix/api/ChequeReadRepresentation.class
 com/aviafix/FixerApplication.class
 com/aviafix/api/PartsWriteRepresentation.class
 com/aviafix/db/generated/tables/PAYBYCHEQUE.class
 com/aviafix/db/generated/Keys$UniqueKeys0.class
 com/aviafix/db/generated/tables/pojos/USRNAME_PASSPROJECTION.class
+com/aviafix/api/ElectronicPaymentReadRepresentation.class
 com/aviafix/FixerConfiguration.class
 com/aviafix/db/DateConverter.class
 com/aviafix/db/generated/tables/USERS.class
@@ -34,6 +36,7 @@ com/aviafix/core/PartStatus.class
 com/aviafix/db/generated/tables/pojos/USERSPROJECTION.class
 com/aviafix/api/ElectronicPaymentWriteRepresentation.class
 com/aviafix/db/generated/tables/pojos/PAYOFFLINEPROJECTION.class
+com/aviafix/api/TotalPaymentRepresentation.class
 com/aviafix/core/OrderStatus.class
 com/aviafix/health/TemplateHealthCheck.class
 com/aviafix/resources/FixerResource.class
@@ -55,6 +58,7 @@ com/aviafix/db/generated/tables/pojos/CUSTOMER_USERSPROJECTION.class
 com/aviafix/db/generated/tables/records/PAYONLINERECORD.class
 com/aviafix/db/generated/tables/records/PAYBYCHEQUERECORD.class
 com/aviafix/api/Saying.class
+com/aviafix/resources/TotalPaymentResourse.class
 com/aviafix/db/generated/tables/HASPARTS.class
 com/aviafix/api/OrderWriteRepresentation.class
 com/aviafix/db/generated/tables/pojos/FINANCEOFFICE_EMPLOYEESPROJECTION.class

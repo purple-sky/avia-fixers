@@ -18,6 +18,7 @@
 /Users/OrangeLion/Documents/Study/UBC/CPSC/304/app/src/main/java/com/aviafix/db/generated/tables/PAYBYCREDITCARD.java
 /Users/OrangeLion/Documents/Study/UBC/CPSC/304/app/src/main/java/com/aviafix/db/generated/tables/pojos/CUSTOMER_USERSPROJECTION.java
 /Users/OrangeLion/Documents/Study/UBC/CPSC/304/app/src/main/java/com/aviafix/api/Saying.java
+/Users/OrangeLion/Documents/Study/UBC/CPSC/304/app/src/main/java/com/aviafix/api/ElectronicPaymentReadRepresentation.java
 /Users/OrangeLion/Documents/Study/UBC/CPSC/304/app/src/main/java/com/aviafix/db/generated/Aviafixers.java
 /Users/OrangeLion/Documents/Study/UBC/CPSC/304/app/src/main/java/com/aviafix/db/generated/tables/REPAIRSHOP_EMPLOYEES.java
 /Users/OrangeLion/Documents/Study/UBC/CPSC/304/app/src/main/java/com/aviafix/db/generated/tables/records/PAYBYCREDITCARDRECORD.java
@@ -44,6 +45,7 @@
 /Users/OrangeLion/Documents/Study/UBC/CPSC/304/app/src/main/java/com/aviafix/resources/OrdersResourse.java
 /Users/OrangeLion/Documents/Study/UBC/CPSC/304/app/src/main/java/com/aviafix/db/generated/tables/PAYBYCHEQUE.java
 /Users/OrangeLion/Documents/Study/UBC/CPSC/304/app/src/main/java/com/aviafix/api/ChequeWriteRepresentation.java
+/Users/OrangeLion/Documents/Study/UBC/CPSC/304/app/src/main/java/com/aviafix/api/TotalPaymentRepresentation.java
 /Users/OrangeLion/Documents/Study/UBC/CPSC/304/app/src/main/java/com/aviafix/db/generated/tables/pojos/USERSPROJECTION.java
 /Users/OrangeLion/Documents/Study/UBC/CPSC/304/app/src/main/java/com/aviafix/db/generated/tables/records/ORDERSRECORD.java
 /Users/OrangeLion/Documents/Study/UBC/CPSC/304/app/src/main/java/com/aviafix/db/generated/tables/pojos/HASPARTSPROJECTION.java
@@ -61,4 +63,6 @@
 /Users/OrangeLion/Documents/Study/UBC/CPSC/304/app/src/main/java/com/aviafix/db/generated/tables/CUSTOMER_USERS.java
 /Users/OrangeLion/Documents/Study/UBC/CPSC/304/app/src/main/java/com/aviafix/FixerApplication.java
 /Users/OrangeLion/Documents/Study/UBC/CPSC/304/app/src/main/java/com/aviafix/health/TemplateHealthCheck.java
+/Users/OrangeLion/Documents/Study/UBC/CPSC/304/app/src/main/java/com/aviafix/api/ChequeReadRepresentation.java
+/Users/OrangeLion/Documents/Study/UBC/CPSC/304/app/src/main/java/com/aviafix/resources/TotalPaymentResourse.java
 /Users/OrangeLion/Documents/Study/UBC/CPSC/304/app/src/main/java/com/aviafix/db/generated/tables/records/PAYOFFLINERECORD.java

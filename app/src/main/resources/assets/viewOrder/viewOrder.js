@@ -26,12 +26,20 @@ angular.module('myApp.viewOrder', ['ngRoute'])
             $location.path('/viewPart/:' + id);
     }
 
+    $scope.deletePart = function (id) {
+                $http
+                     .delete('/api/parts/'+ id)
+                     .then(function(){$location.path('/view1')}, function(){});
+    }
+
+
     $scope.acceptOrder = function (id) {
         $http
             .put('/api/orders/'+ id, {status: "InProgress"})
+            .then(function(){$location.path('/viewOrder/:'+currId)}, function(){});
     }
 
-    $scope.acceptOrder = function (id) {
+    $scope.deleteOrder = function (id) {
             $http
                 .delete('/api/orders/'+ id)
     }

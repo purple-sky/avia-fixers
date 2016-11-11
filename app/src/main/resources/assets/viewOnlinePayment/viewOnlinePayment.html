@@ -1,0 +1,31 @@
+<h2>Your electronic payment
+    <span
+        ng-bind="id">
+    </span>
+
+</h2>
+
+<table class="table table-bordered table-striped">
+    <thead>
+    <tr>
+        <td>ETID</td>
+        <td>Order #</td>
+        <td>Amount Paid</td>
+        <td>Customer ID</td>
+        <td>Payment Date</td>
+        <td>Credit Card #</td>
+        <td>Card Holder</td>
+    </tr>
+    </thead>
+    <tbody>
+    <tr ng-repeat="payment in epayments">
+        <td ng-bind="payment.etid"></td>
+        <td ng-bind="payment.orderNumber"></td>
+        <td ng-bind="payment.paymentAmount"></td>
+        <td ng-bind="payment.customerID"></td>
+        <td ng-bind="payment.paymentDate"></td>
+        <td ng-bind="payment.creditCardNumber"></td>
+        <td ng-bind="payment.cardHolderName"></td>
+    </tr>
+    </tbody>
+</table>
