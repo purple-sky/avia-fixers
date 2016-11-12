@@ -14,17 +14,16 @@
         <td>Customer ID</td>
         <td>Payment Date</td>
         <td>Responsible for transaction</td>
-        <td>Card Holder</td>
     </tr>
     </thead>
     <tbody>
-    <tr ng-repeat="payment in cqpayments">
-        <td ng-bind="payment.chequeNumber"></td>
-        <td ng-bind="payment.orderNumber"></td>
-        <td ng-bind="payment.amount"></td>
-        <td ng-bind="payment.customerId"></td>
-        <td ng-bind="payment.date"></td>
-        <td ng-bind="payment.financeEmployeeId"></td>
+    <tr >
+        <td ng-bind="cqpayment.chequeNumber"></td>
+        <td ng-bind="cqpayment.orderNumber"></td>
+        <td ng-bind="cqpayment.amount"></td>
+        <td ng-bind="cqpayment.customerId"></td>
+        <td ng-bind="cqpayment.date"></td>
+        <td ng-bind="cqpayment.financeEmployeeId"></td>
     </tr>
     </tbody>
 </table>

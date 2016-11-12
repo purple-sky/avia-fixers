@@ -60,15 +60,31 @@ public class ChequeResource {
     @GET
     @Path("/{id}")
     @Timed
-    public String getEpayments(
+    public ChequeReadRepresentation getEpayments(
             @Context DSLContext database,
             @PathParam("id") Integer id
     ) {
-        return database.select()
+        Record record = database.select(PAYBYCHEQUE.CHEQUENUM,
+                PAYBYCHEQUE.BANK,
+                PAYBYCHEQUE.AMOUNT,
+                PAYOFFLINE.CIDPAYOFFLINE,
+                PAYOFFLINE.ORNUMPAYOFFLINE,
+                PAYOFFLINE.FEIDPAYOFFLINE,
+                PAYOFFLINE.PYMNTDATEPAYOFFLINE)
                 .from(PAYBYCHEQUE)
-                .where(PAYBYCHEQUE.CHEQUENUM.equal(id))
-                .fetch()
-                .format();
+                .join(PAYOFFLINE)
+                .on(PAYBYCHEQUE.CHEQUENUM.equal(PAYOFFLINE.CQNUMPAYOFFLINE))
+                .where(PAYBYCHEQUE.CHEQUENUM.eq(id))
+                .fetchOne();
+        return new ChequeReadRepresentation (
+                record.getValue(PAYBYCHEQUE.CHEQUENUM),
+                record.getValue(PAYBYCHEQUE.BANK),
+                record.getValue(PAYBYCHEQUE.AMOUNT),
+                record.getValue(PAYOFFLINE.CIDPAYOFFLINE),
+                record.getValue(PAYOFFLINE.ORNUMPAYOFFLINE),
+                record.getValue(PAYOFFLINE.FEIDPAYOFFLINE),
+                record.getValue(PAYOFFLINE.PYMNTDATEPAYOFFLINE)
+        );
     }
     /*
     POST:

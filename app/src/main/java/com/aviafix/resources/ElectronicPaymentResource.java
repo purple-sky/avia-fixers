@@ -57,15 +57,37 @@ public class ElectronicPaymentResource {
     @GET
     @Path("/{id}")
     @Timed
-    public String getEpayments(
+    public ElectronicPaymentReadRepresentation getEpayments(
             @Context DSLContext database,
             @PathParam("id") Integer id
     ) {
-        return database.select()
+        Record record = database.select(
+                PAYBYCREDITCARD.ETID,
+                PAYONLINE.ORDNUMPAYONL,
+                PAYBYCREDITCARD.CREDITCARDNUM,
+                PAYBYCREDITCARD.EXPDATE,
+                PAYBYCREDITCARD.CODE,
+                PAYBYCREDITCARD.CARDHOLDERNAME,
+                PAYBYCREDITCARD.AMOUNT,
+                PAYONLINE.CIDPAYONLINE,
+                PAYONLINE.PYMNTDATEONLINE)
                 .from(PAYBYCREDITCARD)
-                .where(PAYBYCREDITCARD.ETID.equal(id))
-                .fetch()
-                .format();
+                .join(PAYONLINE)
+                .on(PAYBYCREDITCARD.ETID.equal(PAYONLINE.ETIDPAYONLINE))
+                .where(PAYBYCREDITCARD.ETID.eq(id))
+                .fetchOne();
+        return new ElectronicPaymentReadRepresentation (
+                record.getValue(PAYBYCREDITCARD.ETID),
+                record.getValue(PAYONLINE.ORDNUMPAYONL),
+                record.getValue(PAYBYCREDITCARD.CREDITCARDNUM),
+                record.getValue(PAYBYCREDITCARD.EXPDATE),
+                record.getValue(PAYBYCREDITCARD.CODE),
+                record.getValue(PAYBYCREDITCARD.CARDHOLDERNAME),
+                record.getValue(PAYBYCREDITCARD.AMOUNT),
+                record.getValue(PAYONLINE.CIDPAYONLINE),
+                record.getValue(PAYONLINE.PYMNTDATEONLINE)
+        );
+
     }
 
     // Create a new credit card payment

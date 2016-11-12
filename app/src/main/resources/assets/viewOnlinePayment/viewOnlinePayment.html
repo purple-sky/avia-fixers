@@ -15,17 +15,19 @@
         <td>Payment Date</td>
         <td>Credit Card #</td>
         <td>Card Holder</td>
+        <td>Expiry date</td>
     </tr>
     </thead>
     <tbody>
-    <tr ng-repeat="payment in epayments">
-        <td ng-bind="payment.etid"></td>
-        <td ng-bind="payment.orderNumber"></td>
-        <td ng-bind="payment.paymentAmount"></td>
-        <td ng-bind="payment.customerID"></td>
-        <td ng-bind="payment.paymentDate"></td>
-        <td ng-bind="payment.creditCardNumber"></td>
-        <td ng-bind="payment.cardHolderName"></td>
+    <tr>
+        <td ng-bind="epayment.etid"></td>
+        <td ng-bind="epayment.orderNumber"></td>
+        <td ng-bind="epayment.paymentAmount"></td>
+        <td ng-bind="epayment.customerID"></td>
+        <td ng-bind="epayment.paymentDate"></td>
+        <td ng-bind="epayment.creditCardNumber"></td>
+        <td ng-bind="epayment.cardHolderName"></td>
+        <td ng-bind="epayment.expiryDate"></td>
     </tr>
     </tbody>
 </table>
