@@ -118,7 +118,7 @@ public class PartsResourse {
                             .set(HASPARTS.REPAIRSTATUS, part.repairStatus)
                             .where(HASPARTS.PARTNUM.equal(part.partNumber))
                             .execute();
-                    System.out.println("Part #" + part.partNumber + " new status");
+                    //System.out.println("Part #" + part.partNumber + " new status");
 
                     //check for all parts in order have "Complete" => update order status to "Complete"
 

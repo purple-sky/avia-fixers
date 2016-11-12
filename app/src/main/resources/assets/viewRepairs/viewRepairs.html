@@ -1,0 +1,56 @@
+<h2>Your parts:</h2>
+
+<div class="btn-group">
+    <a type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        Sort by
+        <span class="caret"></span>
+    </a>
+    <ul class="dropdown-menu">
+        <li><a class="dropdown-item" href="#">None</a></li>
+        <li><a class="dropdown-item" href="#">By order ID</a></li>
+        <li><a class="dropdown-item" href="#">By customer #</a></li>
+        <li><a class="dropdown-item" href="#">By part status</a></li>
+    </ul>
+</div>
+
+<div class="btn-group">
+    <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" >
+        Part status
+        <span class="caret"></span>
+    </a>
+    <ul class="dropdown-menu">
+        <li><a href="#">All</a></li>
+        <li><a href="#placed">Placed</a></li>
+        <li><a href="#inprocess">In Process</a></li>
+        <li><a href="#complete">Complete</a></li>
+    </ul>
+</div>
+
+<table class="table table-bordered table-striped">
+    <thead>
+    <tr>
+        <td>Part Number</td>
+        <td>Part Name</td>
+        <td>Repair Status</td>
+        <td>Repair Cost</td>
+        <td>Sell Price</td>
+        <td>Repair Date</td>
+        <td>Order Number</td>
+        <td>Quantity</td>
+        <td>Update</td>
+    </tr>
+    </thead>
+    <tbody>
+    <tr ng-repeat="part in parts">
+        <td ng-bind="part.partNumber"></td>
+        <td ng-bind="part.name"></td>
+        <td ng-bind="part.repairStatus"></td>
+        <td ng-bind="part.repairCost"></td>
+        <td ng-bind="part.sellPrice"></td>
+        <td ng-bind="part.repairDate"></td>
+        <td ng-bind="part.orderNumber"></td>
+        <td ng-bind="part.qtty"></td>
+        <td><button class="btn btn-default" type="button" ng-click="updatePart(part.partNumber)">Update</button></td>
+    </tr>
+    </tbody>
+</table>
