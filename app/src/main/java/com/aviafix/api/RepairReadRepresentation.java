@@ -18,7 +18,7 @@ public class RepairReadRepresentation {
     public final int master;
     public final String masterName;
     public final String shop;
-    private String priority = RepairPriority.LOW;
+    public String priority = RepairPriority.LOW;
 
     public RepairReadRepresentation(
             int partNumber,

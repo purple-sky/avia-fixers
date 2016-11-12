@@ -1,18 +1,6 @@
-<h2>Parts to repair:</h2>
+<h2>Part to repair:</h2>
 
 
-<div class="btn-group">
-    <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" >
-        Part Priority
-        <span class="caret"></span>
-    </a>
-    <ul class="dropdown-menu">
-        <li><a href="#">All</a></li>
-        <li><a href="#low">Low</a></li>
-        <li><a href="#medium">Medium</a></li>
-        <li><a href="#high">High</a></li>
-    </ul>
-</div>
 
 <table class="table table-bordered table-striped">
     <thead>
@@ -42,7 +30,17 @@
         <td ng-bind="part.masterName"></td>
         <td ng-bind="part.shop"></td>
         <td ng-bind="part.priority"></td>
-        <td><button class="btn btn-default" type="button" ng-click="updatePart(part.partNumber)">Repair</button></td>
     </tr>
     </tbody>
 </table>
+
+<form novalidate class="form">
+    <div class="form-group" >
+        <div class="input-group">
+            <input type="number" ng-model="repair.mechanic" placeholder="Repair person ID" />
+            <input type="text" ng-model="repair.status" placeholder="Part Status" />
+        </div>
+    </div>
+    <br />
+    <button class="btn btn-default" type="submit" ng-click="updateRepair()">Submit Repair</button>
+</form>

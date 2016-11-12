@@ -54,10 +54,10 @@ public class RepairScheduleResource {
                         .leftJoin(REPAIR).on(HASPARTS.PARTNUM.eq(REPAIR.PNUMREPAIR))
                         .leftJoin(REPAIRSHOP_EMPLOYEES).on(REPAIR.ERIDREPAIR.eq(REPAIRSHOP_EMPLOYEES.REID))
                         .leftJoin(EMPLOYEE_USERS).on(REPAIR.ERIDREPAIR.eq(EMPLOYEE_USERS.EID))
-                .where(HASPARTS.REPAIRSTATUS.notEqual(PartStatus.COMPLETE))
+                .where(HASPARTS.REPAIRSTATUS.eq(PartStatus.IN_PROGRESS))
                 .fetchInto(RepairReadRepresentation.class);
         for (RepairReadRepresentation r:schedule) {
-            long daysBetween = ChronoUnit.DAYS.between(r.repairDate, today);
+            long daysBetween = ChronoUnit.DAYS.between(today, r.repairDate);
             if (daysBetween > 15) {
                 r.setPriority(RepairPriority.LOW);
             } else if (daysBetween > 10) {
@@ -68,7 +68,7 @@ public class RepairScheduleResource {
     }
 
     @GET
-    @Path("/:{id}")
+    @Path("/{id}")
     @Timed
     public List<RepairReadRepresentation> getPart(
             @Context DSLContext database,
@@ -90,11 +90,11 @@ public class RepairScheduleResource {
                         .leftJoin(REPAIR).on(HASPARTS.PARTNUM.eq(REPAIR.PNUMREPAIR))
                         .leftJoin(REPAIRSHOP_EMPLOYEES).on(REPAIR.ERIDREPAIR.eq(REPAIRSHOP_EMPLOYEES.REID))
                         .leftJoin(EMPLOYEE_USERS).on(REPAIR.ERIDREPAIR.eq(EMPLOYEE_USERS.EID))
-                        .where(HASPARTS.REPAIRSTATUS.notEqual(PartStatus.COMPLETE)
+                        .where(HASPARTS.REPAIRSTATUS.eq(PartStatus.IN_PROGRESS)
                                 .and(HASPARTS.PARTNUM.eq(id)))
                         .fetchInto(RepairReadRepresentation.class);
         for (RepairReadRepresentation r:schedule) {
-            long daysBetween = ChronoUnit.DAYS.between(r.repairDate, today);
+            long daysBetween = ChronoUnit.DAYS.between(today, r.repairDate);
             if (daysBetween > 15) {
                 r.setPriority(RepairPriority.LOW);
             } else if (daysBetween > 10) {
@@ -152,11 +152,13 @@ public class RepairScheduleResource {
                             .format();
                 }
             }
-
+            return Response.created(
+                    URI.create(
+                            "/view1")).build();
         }
         return Response.created(
                 URI.create(
-                        "/view")).build();
+                        "/error")).build();
     }
 
 }
