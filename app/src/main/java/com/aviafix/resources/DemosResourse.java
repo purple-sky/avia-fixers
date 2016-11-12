@@ -3,7 +3,7 @@ package com.aviafix.resources;
 import com.aviafix.api.*;
 import com.aviafix.core.OrderStatus;
 import com.aviafix.core.PartStatus;
-import com.aviafix.db.generated.tables.HASPARTS;
+import com.aviafix.db.generated.tables.*;
 import com.aviafix.db.generated.tables.pojos.HASPARTSPROJECTION;
 import com.aviafix.db.generated.tables.records.HASPARTSRECORD;
 import com.codahale.metrics.annotation.Timed;
@@ -20,6 +20,10 @@ import java.util.stream.Collectors;
 
 import static com.aviafix.db.generated.tables.ORDERS.ORDERS;
 import static com.aviafix.db.generated.tables.HASPARTS.HASPARTS;
+import static com.aviafix.db.generated.tables.PAYBYCREDITCARD.PAYBYCREDITCARD;
+import static com.aviafix.db.generated.tables.PAYONLINE.PAYONLINE;
+import static com.aviafix.db.generated.tables.PAYBYCHEQUE.PAYBYCHEQUE;
+import static com.aviafix.db.generated.tables.PAYOFFLINE.PAYOFFLINE;
 import static org.jooq.impl.DSL.select;
 import static org.jooq.impl.DSL.sum;
 import static org.jooq.impl.DSL.val;
@@ -39,8 +43,26 @@ public class DemosResourse {
     public String getDemo1 (
             @Context DSLContext database
     ) {
-        //TODO : join tables for payments to output one table with all types of payments (see UI representation)
-        return "Result";
+
+        String onlineResult = "SELECT ETID, CREDITCARDNUM, EXPDATE, CODE, CARDHOLDERNAME, AMOUNT," +
+                " CIDPAYONLINE, ORDNUMPAYONL, PYMNTDATEONLINE, 'Credit Card' AS 'Type'" +
+                "FROM payByCreditCard JOIN payOnline WHERE payOnline.etidPayOnline = payByCreditCard.ETID" +
+                "ORDER BY ETID";
+
+        String offlineResult = "SELECT CHEQUENUM, BANK, AMOUNT, CIDPAYOFFLINE, ORNUMPAYOFFLINE," +
+                " FEIDPAYOFFLINE, PYMNTDATEPAYOFFLINE, 'Cheque' AS 'Type'" +
+                "FROM payByCheque JOIN payOffline WHERE payOffline.CQNUMPAYOFFLINE = payByCheque.CHEQUENUM" +
+                "ORDER BY CHEQUENUM";
+
+        String totalResult = database.fetch("SELECT ETID as 'ETID or ChequeNumber', CARDHOLDERNAME as 'CardHolder or BankName', " +
+                "Amount, CIDPAYONLINE as CustomerID, ORDNUMPAYONL as OrderNumber, PYMNTDATEONLINE as PaymentDate, " +
+                "'Credit Card' AS 'Type'" +
+                "FROM (?) t1" +
+                "UNION ALL" +
+                "SELECT CHEQUENUM, BANK, AMOUNT, CIDPAYOFFLINE, ORNUMPAYOFFLINE, PYMNTDATEPAYOFFLINE, 'Cheque' AS 'Type'" +
+                "FROM (?) t2", onlineResult, offlineResult).format();
+
+        return totalResult;
     }
 
     @GET
@@ -49,8 +71,19 @@ public class DemosResourse {
     public String getDemo2 (
             @Context DSLContext database
     ) {
-        //TODO : some division query
-        return "Result";
+        //TODO : some division query (find the name and id of finance employees who processed all the cheque orders above 400
+        final int threshold = 400;
+
+        String result = database.fetch("SELECT distinct eName, eID" +
+                "FROM  employee_users eu, payOffline pf" +
+                "WHERE eu.eID = pf.feidpayOffline and NOT EXISTS" +
+                "   (SELECT feidpayOffline, amount" +
+                "   FROM payOffline pf, payByCheque pc" +
+                "   WHERE pf.feidpayOffline = eu.eID" +
+                "   AND pc.chequeNum = pf.cqNumpayOffline" +
+                "   AND pc.amount < ?)", threshold).format();
+
+        return result;
     }
 
     @GET
