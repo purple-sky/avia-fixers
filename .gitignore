@@ -7,8 +7,8 @@
 *.jar
 *.war
 *.ear
-.idea/
-app/target
+**/.idea/
+app/target/
 target
 app/config.yml
 config.yml
