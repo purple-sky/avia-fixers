@@ -6,8 +6,7 @@
         <span class="caret"></span>
     </a>
     <ul class="dropdown-menu">
-        <li><a class="dropdown-item" href="#">None</a></li>
-        <li><a class="dropdown-item" href="#">By order ID</a></li>
+        <li><a class="dropdown-item" href="#">None (Order ID)</a></li>
         <li><a class="dropdown-item" href="#">By customer #</a></li>
         <li><a class="dropdown-item" href="#">By order status</a></li>
     </ul>
@@ -27,6 +26,21 @@
         <li><a href="#paid">Paid</a></li>
     </ul>
 </div>
+
+<form novalidate class="form">
+    <div class="form-group" >
+        <div class="input-group">
+            <input type="text" ng-model="where.like" placeholder="Part name contains"/>
+            <input type="number" ng-model="where.customer" placeholder="Customer #"/>
+            <input type="number" ng-model="requisites.customerId" placeholder="Customer number" />
+            <input type="number" ng-model="requisites.financeEmployeeId" placeholder="Employee ID" />
+            <input type="date" ng-model="requisites.date" placeholder="Cheque date" />
+        </div>
+    </div>
+    <br />
+    <button class="btn btn-default" type="submit" ng-click="submitCQPayment()">Submit Payment</button>
+</form>
+
 
 <table class="table table-bordered table-striped">
     <thead>
