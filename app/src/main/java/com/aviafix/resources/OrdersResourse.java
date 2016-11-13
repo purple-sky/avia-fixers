@@ -19,7 +19,6 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static com.aviafix.db.generated.tables.HASPARTS.HASPARTS;
 import static com.aviafix.db.generated.tables.ORDERS.ORDERS;
@@ -34,7 +33,8 @@ public class OrdersResourse {
     @GET
     @Timed
     public List<OrderReadRepresentation> getOrders(
-            @Context DSLContext database
+            @Context DSLContext database,
+            @CookieParam("FixerUID") String cookie
     ) {
         return database.selectFrom(ORDERS)
                        .fetchInto(ORDERS)

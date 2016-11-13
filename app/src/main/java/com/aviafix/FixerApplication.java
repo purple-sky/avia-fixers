@@ -58,27 +58,19 @@ public class FixerApplication extends Application<FixerConfiguration> {
                 configuration.getDefaultName()
         );
 
-        final OrdersResourse ordersResourse = new OrdersResourse();
-        final PartsResourse partsResourse = new PartsResourse();
-        final ElectronicPaymentResource electronicPaymentResource = new ElectronicPaymentResource();
-        final ChequeResource chequeResource = new ChequeResource();
-        final DemosResourse demosResourse = new DemosResourse();
-        final TotalPaymentResourse totalPaymentResourse = new TotalPaymentResourse();
-        final RepairScheduleResource repairScheduleResource = new RepairScheduleResource();
-
         final TemplateHealthCheck healthCheck =
                 new TemplateHealthCheck(configuration.getTemplate());
 
         environment.healthChecks().register("template", healthCheck);
         environment.jersey().register(resource);
-        environment.jersey().register(ordersResourse);
-        environment.jersey().register(partsResourse);
-        environment.jersey().register(electronicPaymentResource);
-        environment.jersey().register(chequeResource);
-        environment.jersey().register(demosResourse);
-        environment.jersey().register(totalPaymentResourse);
-        environment.jersey().register(repairScheduleResource);
-
+        environment.jersey().register(new OrdersResourse());
+        environment.jersey().register(new PartsResourse());
+        environment.jersey().register(new ElectronicPaymentResource());
+        environment.jersey().register(new ChequeResource());
+        environment.jersey().register(new DemosResourse());
+        environment.jersey().register(new TotalPaymentResourse());
+        environment.jersey().register(new RepairScheduleResource());
+        environment.jersey().register(new LoginResourse());
     }
 
     public static ObjectMapper configureMapper(final ObjectMapper mapper){
