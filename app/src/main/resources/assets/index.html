@@ -20,11 +20,18 @@
         <li ng-if="fixerUser.role == 'finance_employee' || fixerUser.role == 'customer'"><a href="#!/view1">Orders</a></li>
         <li ng-if="fixerUser.role == 'customer'"><a href="#!/view2">Add order</a></li>
         <li><a href="#!/viewParts">Parts</a></li>
-        <li><a href="#!/repairs">Repairs</a></li>
-        <li><a href="#!/viewPayments">Payments</a></li>
-        <li><a href="#!/viewOnlinePayments">ePayments</a></li>
-        <li><a href="#!/viewOfflinePayments">Cheque Payments</a></li>
-      <!--<li><a href="#!/viewOrder">Order</a></li>-->
+        <li ng-if="fixerUser.role == 'repair_employee'"><a href="#!/repairs">Repairs</a></li>
+        <li ng-if="fixerUser.role == 'finance_employee' || fixerUser.role == 'customer'"><a href="#!/viewPayments">Payments</a></li>
+        <li ng-if="fixerUser.role == 'finance_employee' || fixerUser.role == 'customer'"><a href="#!/viewOnlinePayments">ePayments</a></li>
+        <li ng-if="fixerUser.role == 'finance_employee' || fixerUser.role == 'customer'"><a href="#!/viewOfflinePayments">Cheque Payments</a></li>
+    </ul>
+    <ul class="nav navbar-nav navbar-right">
+        <li class="dropdown">
+            <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span ng-bind="fixerUser.name"></span><span class="caret"></span></a>
+            <ul class="dropdown-menu">
+                <li><a href="#" ng-click="logout()">Logout</a></li>
+            </ul>
+        </li>
     </ul>
 </nav>
 

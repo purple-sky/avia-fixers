@@ -32,8 +32,13 @@ run(['$rootScope', '$location', function($rootScope, $location) {
         }
     });
 }]).
-controller('MainCtrl', ['$scope', '$rootScope', function($scope, $rootScope) {
+controller('MainCtrl', ['$scope', '$rootScope', '$location', function($scope, $rootScope, $location) {
     $rootScope.$watch('fixerUser', function(){
         $scope.fixerUser = $rootScope.fixerUser;
     });
+
+    $scope.logout = function () {
+        delete $rootScope.fixerUser;
+        $location.path('/login');
+    }
 }]);
