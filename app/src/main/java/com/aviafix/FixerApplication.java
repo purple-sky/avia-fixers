@@ -71,6 +71,7 @@ public class FixerApplication extends Application<FixerConfiguration> {
         environment.jersey().register(new TotalPaymentResourse());
         environment.jersey().register(new RepairScheduleResource());
         environment.jersey().register(new LoginResourse());
+        environment.jersey().register(new FinancialReportResource());
     }
 
     public static ObjectMapper configureMapper(final ObjectMapper mapper){
