@@ -28,7 +28,7 @@ angular.module('myApp.viewParts', ['ngRoute'])
         $http
             .get('/api/parts', {params: $scope.where})
             .then(function successCallback(response) {
-                        $scope.orders = response.data;
+                        $scope.parts = response.data;
                     }, function errorCallback(response) {}
                     );
 

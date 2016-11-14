@@ -93,7 +93,7 @@ public class PartsResourse {
                         .add(costFrom.map(HASPARTS.REPAIRCOST::ge))
                         .add(costTo.map(HASPARTS.REPAIRCOST::le))
                         .add(status.map(HASPARTS.REPAIRSTATUS::eq))
-                        //.add(like.map(HASPARTS.PARTNAME::contains))
+                        .add(like.map(HASPARTS.PARTNAME::contains))
                         .combineWithAnd())
                 .orderBy(DSL.field(
                         orderBy.orElse("partNum")
