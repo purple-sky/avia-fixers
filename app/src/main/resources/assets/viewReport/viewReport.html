@@ -1,0 +1,25 @@
+<h2>Financial report</h2>
+
+
+
+<table class="table table-bordered table-striped">
+    <thead>
+    <tr>
+        <th>Customer</th>
+        <th>Order</th>
+        <th>Cost</th>
+        <th>Revenue</th>
+        <th>Gain/Loss</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr ng-repeat="report in reports">
+        <td rowspan="0" ng-bind="report.customer"></td>
+        <td ng-bind="report.order"></td>
+        <td ng-bind="report.cost"></td>
+        <td ng-bind="report.revenue"></td>
+        <td ng-bind="report.profit"></td>
+
+    </tr>
+    </tbody>
+</table>

@@ -211,7 +211,7 @@ public class PartsResourse {
 
     @DELETE
     @Path("/{id}")
-    public String deletePart (
+    public void deletePart (
             @Context DSLContext database,
             @PathParam("id") Integer id
     ) {
@@ -232,7 +232,7 @@ public class PartsResourse {
                             .where(HASPARTS.PARTNUM.equal(id))
                             .execute();
                 } catch (Exception e) {
-                    return "Sorry something went wrong";
+                    //return "Sorry something went wrong";
                 }
 
                 // Code below checks whether or not order has other parts.
@@ -254,11 +254,11 @@ public class PartsResourse {
                             .format();
                 }
 
-                return "Part #" + id + " deleted";
+                //return "Part #" + id + " deleted";
             }
-            return "Part #" + id + " can't be deleted";
+            //return "Part #" + id + " can't be deleted";
         }
-        return "Part doesn't exist";
+        //return "Part doesn't exist";
     }
 
 }

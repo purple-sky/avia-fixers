@@ -24,6 +24,7 @@
         <li ng-if="fixerUser.role == 'finance_employee' || fixerUser.role == 'customer'"><a href="#!/viewPayments">Payments</a></li>
         <li ng-if="fixerUser.role == 'finance_employee' || fixerUser.role == 'customer'"><a href="#!/viewOnlinePayments">ePayments</a></li>
         <li ng-if="fixerUser.role == 'finance_employee' || fixerUser.role == 'customer'"><a href="#!/viewOfflinePayments">Cheque Payments</a></li>
+        <li ng-if="fixerUser.role == 'finance_employee'"><a href="#!/reportView">View Report</a></li>
     </ul>
     <ul class="nav navbar-nav navbar-right">
         <li class="dropdown">
@@ -63,6 +64,7 @@
 <script src="viewOfflinePayments/viewOfflinePayments.js"></script>
 <script src="viewOnlinePayment/viewOnlinePayment.js"></script>
 <script src="viewOfflinePayment/viewOfflinePayment.js"></script>
+<script src="viewReport/viewReport.js"></script>
 <script src="components/version/version.js"></script>
 <script src="components/version/version-directive.js"></script>
 <script src="components/version/interpolate-filter.js"></script>

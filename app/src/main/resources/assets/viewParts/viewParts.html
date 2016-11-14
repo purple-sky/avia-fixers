@@ -38,6 +38,7 @@
         <td>Order Number</td>
         <td>Quantity</td>
         <td>Update</td>
+        <td>Delete</td>
     </tr>
     </thead>
     <tbody>
@@ -51,6 +52,7 @@
         <td ng-bind="part.orderNumber"></td>
         <td ng-bind="part.qtty"></td>
         <td><button class="btn btn-default" type="button" ng-click="updatePart(part.partNumber)">Update</button></td>
+        <td><button class="btn btn-default" type="button" ng-click="deletePart(part.partNumber)">Delete</button></td>
     </tr>
     </tbody>
 </table>

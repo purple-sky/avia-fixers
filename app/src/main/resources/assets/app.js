@@ -18,6 +18,7 @@ angular.module('myApp', [
     'myApp.viewOfflinePayment',
     'myApp.viewRepair',
     'myApp.viewRepairs',
+    'myApp.viewReport',
     'myApp.version'
 ]).
 config(['$locationProvider', '$routeProvider', function($locationProvider, $routeProvider) {

@@ -14,7 +14,14 @@ angular.module('myApp.viewParts', ['ngRoute'])
 
     $scope.updatePart = function (id) {
             $location.path('/viewPart/:' + id);
-        }
+    }
+
+    $scope.deletePart = function (id) {
+                $http
+                    .delete('/api/parts/'+ id)
+                    .then(function(){$location.path('/viewParts')}, function(){});
+    }
+
 
     $http
         .get('/api/parts')

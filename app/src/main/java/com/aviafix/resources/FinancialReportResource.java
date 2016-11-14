@@ -10,6 +10,7 @@ import com.codahale.metrics.annotation.Timed;
 import com.codahale.metrics.health.HealthCheck;
 import org.jooq.*;
 import org.jooq.impl.DSL;
+import java.text.DecimalFormat;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
@@ -36,21 +37,29 @@ public class FinancialReportResource {
     public List<FinancialReportReadRepresentation> getReport(
             @Context DSLContext database
             ) {
-        /*List<FinancialReportReadRepresentation> representations = database.select(
-                val(PAYBYCHEQUE.AMOUNT.sum().plus(PAYBYCREDITCARD.AMOUNT.sum())).as("revenue"),
-                val(HASPARTS.REPAIRCOST.sum()).as("costOfGoodsSold"),
-                val((HASPARTS.QTY.multiply(HASPARTS.SELLPRICE)).sum()).as("profit"))
-                .from(HASPARTS, PAYBYCHEQUE, PAYBYCREDITCARD)
-                .fetchInto(FinancialReportReadRepresentation.class);
-        return representations;
-        }*/
+        /*List<FinancialReportReadRepresentation> representations =
+                database.select(
+                            PAYBYCHEQUE.AMOUNT.sum().plus(PAYBYCREDITCARD.AMOUNT.sum()).as("revenue"),
+                            HASPARTS.REPAIRCOST.sum().as("costOfGoodsSold"),
+                            (HASPARTS.QTY.multiply(HASPARTS.SELLPRICE)).sum().as("profit"))
+                        .from(HASPARTS, PAYBYCHEQUE, PAYBYCREDITCARD)
+                        .fetchInto(FinancialReportReadRepresentation.class);*/
+        List<FinancialReportReadRepresentation> representations =
+                database.select(
+                        ORDERS.ORDERNUM.as("ORDER"),
+                        ORDERS.ORDERCID.as("CUSTOMER"),
+                        HASPARTS.SELLPRICE.multiply(HASPARTS.QTY).sum().as("REVENUE"),
+                        HASPARTS.REPAIRCOST.multiply(HASPARTS.QTY).sum().as("COST")
+                        )
+                        .from(ORDERS)
+                        .join(HASPARTS)
+                        .on(ORDERS.ORDERNUM.eq(HASPARTS.PORDERNUM))
+                        .groupBy(ORDERS.ORDERNUM)
+                        .fetchInto(FinancialReportReadRepresentation.class);
 
-    List<FinancialReportReadRepresentation> representations = database.select(
-            PAYBYCHEQUE.AMOUNT.sum().plus(PAYBYCREDITCARD.AMOUNT.sum()).as("revenue"),
-            HASPARTS.REPAIRCOST.sum().as("costOfGoodsSold"),
-            (HASPARTS.QTY.multiply(HASPARTS.SELLPRICE)).sum().as("profit"))
-            .from(HASPARTS, PAYBYCHEQUE, PAYBYCREDITCARD)
-            .fetchInto(FinancialReportReadRepresentation.class);
-    return representations;
-}
+        for (FinancialReportReadRepresentation f: representations) {
+            f.setProfit(f);
+        }
+        return representations;
+    }
 }
