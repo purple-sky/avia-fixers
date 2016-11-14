@@ -6,36 +6,26 @@
         <span class="caret"></span>
     </a>
     <ul class="dropdown-menu">
-        <li><a class="dropdown-item" href="#">None (Order ID)</a></li>
-        <li><a class="dropdown-item" href="#">By customer #</a></li>
-        <li><a class="dropdown-item" href="#">By order status</a></li>
-    </ul>
-</div>
-
-
-<div class="btn-group">
-    <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" >
-        Order status
-        <span class="caret"></span>
-    </a>
-    <ul class="dropdown-menu">
-        <li><a href="#">All</a></li>
-        <li><a href="#placed">Placed</a></li>
-        <li><a href="#inprocess">In Process</a></li>
-        <li><a href="#complete">Complete</a></li>
-        <li><a href="#paid">Paid</a></li>
+        <li><a class="dropdown-item" href="#" ng-click="resetOrderBy()">None (Order ID)</a></li>
+        <li><a class="dropdown-item" href="#" ng-click="setOrderBy('ordercID')">By customer #</a></li>
+        <li><a class="dropdown-item" href="#" ng-click="setOrderBy('orderStatus')">By order status</a></li>
     </ul>
 </div>
 
 <form novalidate class="form">
     <div class="form-group" >
         <div class="input-group">
-            <input type="text" ng-model="where.like" placeholder="Part name contains"/>
-            <input type="number" ng-model="where.customer" placeholder="Customer #"/>
-            <input type="date" ng-model="where.dateFrom" placeholder="Date from" />
-            <input type="date" ng-model="where.dateTo" placeholder="Date to" />
-            <input type="number" ng-model="where.priceFrom" placeholder="Employee ID" />
-            <input type="number" ng-model="where.priceTo" placeholder="Cheque date" />
+            <input class="form-control" type="number" ng-model="where.order" placeholder="Order number"/>
+            <input class="form-control" type="number" ng-model="where.customer" placeholder="Customer #"/>
+            <input class="form-control" type="number" ng-model="where.priceFrom" placeholder="Price from" />
+            <input class="form-control" type="number" ng-model="where.priceTo" placeholder="Price To" />
+            <select class="form-control" ng-model="where.status">
+                <option value="all">-All-</option>
+                <option value="Placed">Placed</option>
+                <option value="InProgress">In Progress</option>
+                <option value="Complete">Complete</option>
+                <option value="Paid">Paid</option>
+            </select>
         </div>
     </div>
     <br />

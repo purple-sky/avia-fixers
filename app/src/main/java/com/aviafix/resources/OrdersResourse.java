@@ -3,18 +3,23 @@ package com.aviafix.resources;
 import com.aviafix.api.*;
 import com.aviafix.core.OrderStatus;
 import com.aviafix.core.PartStatus;
+import com.aviafix.core.Roles;
+import com.aviafix.core.UserReader;
+import com.aviafix.tools.OptionalFilter;
 import com.codahale.metrics.annotation.Timed;
 import org.jooq.DSLContext;
 import org.jooq.Record;
-import org.jooq.Select;
+import org.jooq.impl.DSL;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.math.BigDecimal;
 import java.net.URI;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -31,20 +36,51 @@ public class OrdersResourse {
     @GET
     @Timed
     public List<OrderReadRepresentation> getOrders(
+            @QueryParam("order") Optional<Integer> order,
+            @QueryParam("customer") Optional<Integer> customer,
+            @QueryParam("priceFrom") Optional<Double> priceFrom,
+            @QueryParam("priceTo") Optional<Double> priceTo,
+            @QueryParam("status") Optional<String> status,
+            @QueryParam("orderBy") Optional<String> orderBy,
             @Context DSLContext database,
-            @CookieParam("FixerUID") String cookie
+            @CookieParam("FixerUID") int fixerUID
     ) {
+
+        final UserFullReadRepresentation user =
+                UserReader.findUser(fixerUID)
+                          .apply(database)
+                          .orElseThrow(() -> new WebApplicationException(Response.Status.UNAUTHORIZED));
+
+        if(user.role.equals(Roles.REPAIR)){
+            throw new WebApplicationException(Response.Status.UNAUTHORIZED);
+        }
+
+        if(!user.role.equals(Roles.FINANCE)){
+            customer = Optional.of(user.customerId);
+        }
+
         return database.selectFrom(ORDERS)
+                       .where(OptionalFilter
+                                      .build()
+                                      .add(order.map(ORDERS.ORDERNUM::eq))
+                                      .add(customer.map(ORDERS.ORDERCID::eq))
+                                      .add(priceFrom.map(ORDERS.TOTALPRICE::ge))
+                                      .add(priceTo.map(ORDERS.TOTALPRICE::le))
+                                      .add(status.map(ORDERS.ORDERSTATUS::eq))
+                                      .combineWithAnd())
+                       .orderBy(DSL.field(
+                               orderBy.orElse("orderNum")
+                       ))
                        .fetchInto(ORDERS)
                        .stream()
-                       .map(order ->
+                       .map(orderRecord ->
                                new OrderReadRepresentation(
-                                       order.ORDERNUM(),
-                                       order.DATE(),
-                                       order.ORDERSTATUS(),
-                                       order.ORDERREPAIRDATE(),
-                                       order.ORDERCID(),
-                                       order.TOTALPRICE()
+                                       orderRecord.ORDERNUM(),
+                                       orderRecord.DATE(),
+                                       orderRecord.ORDERSTATUS(),
+                                       orderRecord.ORDERREPAIRDATE(),
+                                       orderRecord.ORDERCID(),
+                                       orderRecord.TOTALPRICE()
                                )
                        )
                        .collect(Collectors.toList());

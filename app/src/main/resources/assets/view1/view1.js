@@ -9,9 +9,11 @@ angular.module('myApp.view1', ['ngRoute'])
     });
 }])
 
-.controller('View1Ctrl', ['$scope', '$http', '$location',function($scope, $http, $location) {
+.controller('View1Ctrl', ['$scope', '$http', '$location', '$rootScope',function($scope, $http, $location, $rootScope) {
     $scope.orders = [];
     $scope.where = {};
+    // add when want to filter stuff by user attributes
+    $scope.fixerUser = $rootScope.fixerUser;
 
     $scope.viewOrder = function (id) {
         $location.path('/viewOrder/:' + id);
@@ -19,13 +21,28 @@ angular.module('myApp.view1', ['ngRoute'])
 
     $scope.filter = function() {
         $http
-            .get('/api/orders/filter', $scope.where)
+            .get('/api/orders', {params: $scope.where})
             .then(function successCallback(response) {
                         $scope.orders = response.data;
                     }, function errorCallback(response) {}
                     );
 
     }
+    
+    $scope.$watch('where.status', function () {
+        if($scope.where.status == 'all'){
+            delete $scope.where.status;
+        }
+    });
+
+    $scope.setOrderBy = function (field) {
+        $scope.where.orderBy = field;
+        $scope.filter();
+    };
+    $scope.resetOrderBy = function () {
+        delete $scope.where.orderBy;
+        $scope.filter();
+    };
 
     $http
         .get('/api/orders')
