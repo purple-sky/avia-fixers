@@ -1,14 +1,12 @@
 package com.aviafix.resources;
 
-import com.aviafix.api.OrderReadRepresentation;
-import com.aviafix.api.OrderWriteRepresentation;
-import com.aviafix.api.PartsReadRepresentation;
-import com.aviafix.api.PartsWriteRepresentation;
+import com.aviafix.api.*;
 import com.aviafix.core.OrderStatus;
 import com.aviafix.core.PartStatus;
 import com.codahale.metrics.annotation.Timed;
 import org.jooq.DSLContext;
 import org.jooq.Record;
+import org.jooq.Select;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
@@ -77,6 +75,16 @@ public class OrdersResourse {
                 )
                 .collect(Collectors.toList());
     }
+
+    /*@GET
+    @Path("/filter")
+    @Timed
+    public List<OrderReadRepresentation> getFilteredOrders(
+            @Context DSLContext database,
+            WhereRepresentation where
+    ) {
+        Select query = database.selectQuery();
+    }*/
 
     // Create a new order
     @POST

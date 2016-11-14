@@ -11,9 +11,20 @@ angular.module('myApp.view1', ['ngRoute'])
 
 .controller('View1Ctrl', ['$scope', '$http', '$location',function($scope, $http, $location) {
     $scope.orders = [];
+    $scope.where = {};
 
     $scope.viewOrder = function (id) {
         $location.path('/viewOrder/:' + id);
+    }
+
+    $scope.filter = function() {
+        $http
+            .get('/api/orders/filter', $scope.where)
+            .then(function successCallback(response) {
+                        $scope.orders = response.data;
+                    }, function errorCallback(response) {}
+                    );
+
     }
 
     $http

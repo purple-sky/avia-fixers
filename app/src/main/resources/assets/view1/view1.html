@@ -32,13 +32,14 @@
         <div class="input-group">
             <input type="text" ng-model="where.like" placeholder="Part name contains"/>
             <input type="number" ng-model="where.customer" placeholder="Customer #"/>
-            <input type="number" ng-model="requisites.customerId" placeholder="Customer number" />
-            <input type="number" ng-model="requisites.financeEmployeeId" placeholder="Employee ID" />
-            <input type="date" ng-model="requisites.date" placeholder="Cheque date" />
+            <input type="date" ng-model="where.dateFrom" placeholder="Date from" />
+            <input type="date" ng-model="where.dateTo" placeholder="Date to" />
+            <input type="number" ng-model="where.priceFrom" placeholder="Employee ID" />
+            <input type="number" ng-model="where.priceTo" placeholder="Cheque date" />
         </div>
     </div>
     <br />
-    <button class="btn btn-default" type="submit" ng-click="submitCQPayment()">Submit Payment</button>
+    <button class="btn btn-default" type="submit" ng-click="filter()">Filter</button>
 </form>
 
 

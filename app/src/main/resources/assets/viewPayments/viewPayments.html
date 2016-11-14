@@ -20,14 +20,26 @@
         <span class="caret"></span>
     </a>
     <ul class="dropdown-menu">
-        <li><a href="#">None</a></li>
-        <li><a href="#online">Online</a></li>
-        <li><a href="#offline">Offline</a></li>
+        <li><a ng-click="toOnline()">Online</a></li>
+        <li><a ng-click="toOffline()">Offline</a></li>
     </ul>
 </div>
 
-<button class="btn btn-default" type="button" ng-click="toOnline()">View ePayments details</button>
-<button class="btn btn-default" type="button" ng-click="toOffline()">View cheques details</button>
+<form novalidate class="form">
+    <div class="form-group" >
+        <div class="input-group">
+            <input type="number" ng-model="where.customer" placeholder="Customer #"/>
+            <input type="number" ng-model="where.orderNum" placeholder="Order #" />
+            <input type="number" ng-model="where.number" placeholder="Payment ID" />
+            <input type="date" ng-model="where.dateFrom" placeholder="Date from" />
+            <input type="date" ng-model="where.dateTo" placeholder="Date to" />
+            <input type="number" ng-model="where.priceFrom" placeholder="Employee ID" />
+            <input type="number" ng-model="where.priceTo" placeholder="Cheque date" />
+        </div>
+    </div>
+    <br />
+    <button class="btn btn-default" type="submit" ng-click="filter()">Filter</button>
+</form>
 
 <table class="table table-bordered table-striped">
     <thead>
