@@ -22,9 +22,10 @@ import static com.aviafix.db.generated.tables.PAYBYCREDITCARD.PAYBYCREDITCARD;
 import static com.aviafix.db.generated.tables.PAYONLINE.PAYONLINE;
 import static com.aviafix.db.generated.tables.PAYBYCHEQUE.PAYBYCHEQUE;
 import static com.aviafix.db.generated.tables.PAYOFFLINE.PAYOFFLINE;
+import static org.jooq.impl.DSL.round;
 import static org.jooq.impl.DSL.val;
 
-@Path("/payments")
+@Path("/report")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 
@@ -33,16 +34,23 @@ public class FinancialReportResource {
     @GET
     @Timed
     public List<FinancialReportReadRepresentation> getReport(
-                @Context DSLContext database
-    ) {
-        List<FinancialReportReadRepresentation> representations = database.select(
+            @Context DSLContext database
+            ) {
+        /*List<FinancialReportReadRepresentation> representations = database.select(
                 val(PAYBYCHEQUE.AMOUNT.sum().plus(PAYBYCREDITCARD.AMOUNT.sum())).as("revenue"),
                 val(HASPARTS.REPAIRCOST.sum()).as("costOfGoodsSold"),
                 val((HASPARTS.QTY.multiply(HASPARTS.SELLPRICE)).sum()).as("profit"))
                 .from(HASPARTS, PAYBYCHEQUE, PAYBYCREDITCARD)
                 .fetchInto(FinancialReportReadRepresentation.class);
-
         return representations;
-    }
+        }*/
 
+    List<FinancialReportReadRepresentation> representations = database.select(
+            PAYBYCHEQUE.AMOUNT.sum().plus(PAYBYCREDITCARD.AMOUNT.sum()).as("revenue"),
+            HASPARTS.REPAIRCOST.sum().as("costOfGoodsSold"),
+            (HASPARTS.QTY.multiply(HASPARTS.SELLPRICE)).sum().as("profit"))
+            .from(HASPARTS, PAYBYCHEQUE, PAYBYCREDITCARD)
+            .fetchInto(FinancialReportReadRepresentation.class);
+    return representations;
+}
 }

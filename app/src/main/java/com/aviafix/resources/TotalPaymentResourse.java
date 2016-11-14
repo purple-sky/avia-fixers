@@ -45,10 +45,13 @@ public class TotalPaymentResourse {
     public List<TotalPaymentRepresentation> getPayments(
             @Context DSLContext database
     ) {
-        List<TotalPaymentRepresentation> representations = database.select(PAYBYCHEQUE.CHEQUENUM.as("NUMB"), PAYOFFLINE.CIDPAYOFFLINE.as("CLIENT"),
-                                        PAYOFFLINE.PYMNTDATEPAYOFFLINE.as("DATE"),
-                                        PAYOFFLINE.ORNUMPAYOFFLINE.as("ORDER"), PAYBYCHEQUE.AMOUNT.as("AMOUNT"),
-                                        val("Offline").as("TYPE"))
+        List<TotalPaymentRepresentation> representations =
+                database.select(
+                        PAYBYCHEQUE.CHEQUENUM.as("NUMB"),
+                        PAYOFFLINE.CIDPAYOFFLINE.as("CLIENT"),
+                        PAYOFFLINE.PYMNTDATEPAYOFFLINE.as("DATE"),
+                        PAYOFFLINE.ORNUMPAYOFFLINE.as("ORDER"), PAYBYCHEQUE.AMOUNT.as("AMOUNT"),
+                        val("Offline").as("TYPE"))
                 .from(PAYBYCHEQUE)
                 .join(PAYOFFLINE)
                 .on(PAYBYCHEQUE.CHEQUENUM.equal(PAYOFFLINE.CQNUMPAYOFFLINE))
