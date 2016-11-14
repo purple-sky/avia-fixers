@@ -6,25 +6,39 @@
         <span class="caret"></span>
     </a>
     <ul class="dropdown-menu">
-        <li><a class="dropdown-item" href="#">None</a></li>
-        <li><a class="dropdown-item" href="#">By order ID</a></li>
-        <li><a class="dropdown-item" href="#">By customer #</a></li>
-        <li><a class="dropdown-item" href="#">By part status</a></li>
+        <li><a class="dropdown-item" ng-click="resetOrderBy()">None (by Part #)</a></li>
+        <li><a class="dropdown-item" ng-click="setOrderBy('porderNum')">By order ID</a></li>
+        <li><a class="dropdown-item" ng-click="setOrderBy('repairStatus')">By part status</a></li>
+        <li ng-if="fixerUser.role == 'finance_employee'">
+            <a class="dropdown-item" ng-click="setOrderBy('repairCost')">By part cost</a>
+        </li>
+        <li ng-if="fixerUser.role == 'finance_employee' || fixerUser.role == 'customer'">
+            <a class="dropdown-item" ng-click="setOrderBy('sellPrice')">By part price</a>
+        </li>
     </ul>
 </div>
 
-<div class="btn-group">
-    <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" >
-        Part status
-        <span class="caret"></span>
-    </a>
-    <ul class="dropdown-menu">
-        <li><a href="#">All</a></li>
-        <li><a href="#placed">Placed</a></li>
-        <li><a href="#inprocess">In Process</a></li>
-        <li><a href="#complete">Complete</a></li>
-    </ul>
-</div>
+<form novalidate class="form">
+    <div class="form-group" >
+        <div class="input-group">
+            <input class="form-control" type="number" ng-model="where.partN" placeholder="Part number"/>
+            <input class="form-control" type="number" ng-model="where.order" placeholder="Order number"/>
+            <input ng-if="fixerUser.role == 'finance_employee' || fixerUser.role == 'customer'" class="form-control" type="number" ng-model="where.priceFrom" placeholder="Price from" />
+            <input ng-if="fixerUser.role == 'finance_employee' || fixerUser.role == 'customer'" class="form-control" type="number" ng-model="where.priceTo" placeholder="Price To" />
+            <input ng-if="fixerUser.role == 'finance_employee'" class="form-control" type="number" ng-model="where.costFrom" placeholder="Cost from" />
+            <input ng-if="fixerUser.role == 'finance_employee'" class="form-control" type="number" ng-model="where.costTo" placeholder="Cost To" />
+            <input class="form-control" type="text" ng-model="where.like" placeholder="Part name contains" />
+            <select class="form-control" ng-model="where.status">
+                <option value="all">-All-</option>
+                <option value="Placed">Placed</option>
+                <option value="InProgress">In Progress</option>
+                <option value="Complete">Complete</option>
+            </select>
+        </div>
+    </div>
+    <br />
+    <button class="btn btn-default" type="submit" ng-click="filter()">Filter</button>
+</form>
 
 <table class="table table-bordered table-striped">
     <thead>
@@ -32,13 +46,13 @@
         <td>Part Number</td>
         <td>Part Name</td>
         <td>Repair Status</td>
-        <td>Repair Cost</td>
-        <td>Sell Price</td>
+        <td ng-if="fixerUser.role == 'finance_employee'">Repair Cost</td>
+        <td ng-if="fixerUser.role == 'finance_employee' || fixerUser.role == 'customer'">Sell Price</td>
         <td>Repair Date</td>
         <td>Order Number</td>
         <td>Quantity</td>
-        <td>Update</td>
-        <td>Delete</td>
+        <td ng-if="fixerUser.role == 'finance_employee' || fixerUser.role == 'repair_employee'">Update</td>
+        <td ng-if="fixerUser.role == 'customer'">Delete</td>
     </tr>
     </thead>
     <tbody>
@@ -46,13 +60,17 @@
         <td ng-bind="part.partNumber"></td>
         <td ng-bind="part.name"></td>
         <td ng-bind="part.repairStatus"></td>
-        <td ng-bind="part.repairCost"></td>
-        <td ng-bind="part.sellPrice"></td>
+        <td ng-if="fixerUser.role == 'finance_employee'" ng-bind="part.repairCost"></td>
+        <td ng-if="fixerUser.role == 'finance_employee' || fixerUser.role == 'customer'" ng-bind="part.sellPrice"></td>
         <td ng-bind="part.repairDate"></td>
         <td ng-bind="part.orderNumber"></td>
         <td ng-bind="part.qtty"></td>
-        <td><button class="btn btn-default" type="button" ng-click="updatePart(part.partNumber)">Update</button></td>
-        <td><button class="btn btn-default" type="button" ng-click="deletePart(part.partNumber)">Delete</button></td>
+        <td ng-if="fixerUser.role == 'finance_employee' || fixerUser.role == 'repair_employee'">
+            <button class="btn btn-default" type="button" ng-click="updatePart(part.partNumber)">Update</button>
+        </td>
+        <td ng-if="fixerUser.role == 'customer'">
+            <button class="btn btn-default" type="button" ng-click="deletePart(part.partNumber)">Delete</button>
+        </td>
     </tr>
     </tbody>
 </table>

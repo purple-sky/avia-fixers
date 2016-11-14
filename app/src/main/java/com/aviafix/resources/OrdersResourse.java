@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 
 import static com.aviafix.db.generated.tables.HASPARTS.HASPARTS;
 import static com.aviafix.db.generated.tables.ORDERS.ORDERS;
+import static com.aviafix.db.generated.tables.CUSTOMER_USERS.CUSTOMER_USERS;
 
 
 @Path("/orders")
@@ -112,24 +113,20 @@ public class OrdersResourse {
                 .collect(Collectors.toList());
     }
 
-    /*@GET
-    @Path("/filter")
-    @Timed
-    public List<OrderReadRepresentation> getFilteredOrders(
-            @Context DSLContext database,
-            WhereRepresentation where
-    ) {
-        Select query = database.selectQuery();
-    }*/
-
     // Create a new order
     @POST
     @Timed
     @Consumes(MediaType.APPLICATION_JSON)
     public Response postOrder(
             @Context DSLContext database, // assuresconnection to db
-            OrderWriteRepresentation order
+            OrderWriteRepresentation order,
+            @CookieParam("FixerUID") int fixerUID
     ) {
+
+        Record customerRec = database.select(CUSTOMER_USERS.CID)
+                .from(CUSTOMER_USERS)
+                .where(CUSTOMER_USERS.CUID.eq(fixerUID))
+                .fetchOne();
 
         Record record = database.insertInto(
                 ORDERS,
@@ -139,7 +136,7 @@ public class OrdersResourse {
         ).values(
                 LocalDate.now(),
                 Optional.ofNullable(order.status).orElse(OrderStatus.PLACED),
-                order.customerId
+                customerRec.getValue(CUSTOMER_USERS.CID)
         ).returning(
                 ORDERS.ORDERNUM
         ).fetchOne();

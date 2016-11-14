@@ -1,15 +1,15 @@
 'use strict';
 
-angular.module('myApp.view2', ['ngRoute'])
+angular.module('myApp.orderForm', ['ngRoute'])
 
 .config(['$routeProvider', function($routeProvider) {
-    $routeProvider.when('/view2', {
-        templateUrl: 'view2/view2.html',
-        controller: 'View2Ctrl'
+    $routeProvider.when('/orderForm', {
+        templateUrl: 'orderForm/orderForm.html',
+        controller: 'OrderFormCtrl'
     });
 }])
 
-.controller('View2Ctrl', ['$scope', '$http', '$location', function($scope, $http, $location) {
+.controller('OrderFormCtrl', ['$scope', '$http', '$location', '$rootScope', function($scope, $http, $location, $rootScope) {
     $scope.parts = new Array(1);
 
     $scope.addPart = function() {

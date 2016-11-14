@@ -5,7 +5,7 @@ angular.module('myApp', [
     'ngRoute',
     'myApp.loginForm',
     'myApp.view1',
-    'myApp.view2',
+    'myApp.orderForm',
     'myApp.viewParts',
     'myApp.viewOrder',
     'myApp.onlinePaymentForm',

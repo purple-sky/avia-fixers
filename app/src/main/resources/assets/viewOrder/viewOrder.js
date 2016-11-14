@@ -9,10 +9,11 @@ angular.module('myApp.viewOrder', ['ngRoute'])
     });
 }])
 
-.controller('ViewOrderCtrl', ['$scope', '$http', '$routeParams', '$location', function($scope, $http, $routeParams, $location) {
+.controller('ViewOrderCtrl', ['$scope', '$http', '$routeParams', '$location', '$rootScope', function($scope, $http, $routeParams, $location, $rootScope) {
     $scope.order = [];
     var currentId = $routeParams.id;
     $scope.id = currentId;
+    $scope.fixerUser = $rootScope.fixerUser;
 
     $scope.onlinePayment = function (id) {
         $location.path('/onlinePaymentForm/' + id);
@@ -42,6 +43,7 @@ angular.module('myApp.viewOrder', ['ngRoute'])
     $scope.deleteOrder = function (id) {
             $http
                 .delete('/api/orders/'+ id)
+                .then(function(){$location.path('/view1')}, function(){});
     }
 
     $http

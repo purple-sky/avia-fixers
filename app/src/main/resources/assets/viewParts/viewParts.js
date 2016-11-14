@@ -9,8 +9,10 @@ angular.module('myApp.viewParts', ['ngRoute'])
     });
 }])
 
-.controller('ViewPartsCtrl', ['$scope', '$http', '$location', function($scope, $http, $location) {
+.controller('ViewPartsCtrl', ['$scope', '$http', '$location', '$rootScope', function($scope, $http, $location, $rootScope) {
     $scope.parts = [];
+    $scope.where = {};
+    $scope.fixerUser = $rootScope.fixerUser;
 
     $scope.updatePart = function (id) {
             $location.path('/viewPart/:' + id);
@@ -22,6 +24,30 @@ angular.module('myApp.viewParts', ['ngRoute'])
                     .then(function(){$location.path('/viewParts')}, function(){});
     }
 
+    $scope.filter = function() {
+        $http
+            .get('/api/parts', {params: $scope.where})
+            .then(function successCallback(response) {
+                        $scope.orders = response.data;
+                    }, function errorCallback(response) {}
+                    );
+
+    }
+
+    $scope.$watch('where.status', function () {
+            if($scope.where.status == 'all'){
+                delete $scope.where.status;
+            }
+    });
+
+    $scope.setOrderBy = function (field) {
+            $scope.where.orderBy = field;
+            $scope.filter();
+    };
+    $scope.resetOrderBy = function () {
+            delete $scope.where.orderBy;
+            $scope.filter();
+    };
 
     $http
         .get('/api/parts')
@@ -30,5 +56,7 @@ angular.module('myApp.viewParts', ['ngRoute'])
         }, function errorCallback(response) {
         // called asynchronously if an error occurs
         // or server returns response with an error status.
-        });
+    });
+
+
 }]);

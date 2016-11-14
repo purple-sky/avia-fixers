@@ -3,11 +3,14 @@ package com.aviafix.resources;
 import com.aviafix.api.*;
 import com.aviafix.core.OrderStatus;
 import com.aviafix.core.PartStatus;
-import com.aviafix.db.generated.tables.HASPARTS;
-import com.aviafix.db.generated.tables.pojos.HASPARTSPROJECTION;
-import com.aviafix.db.generated.tables.records.HASPARTSRECORD;
+import com.aviafix.core.Roles;
+import com.aviafix.core.UserReader;
+import com.aviafix.tools.OptionalFilter;
 import com.codahale.metrics.annotation.Timed;
+import org.jooq.DSLContext;
 import org.jooq.*;
+import org.jooq.impl.DSL;
+import org.jooq.Record;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
@@ -20,6 +23,7 @@ import java.util.stream.Collectors;
 
 import static com.aviafix.db.generated.tables.ORDERS.ORDERS;
 import static com.aviafix.db.generated.tables.HASPARTS.HASPARTS;
+import static com.aviafix.db.generated.tables.CUSTOMER_USERS.CUSTOMER_USERS;
 import static org.jooq.impl.DSL.select;
 import static org.jooq.impl.DSL.sum;
 import static org.jooq.impl.DSL.val;
@@ -35,9 +39,65 @@ public class PartsResourse {
     @GET
     @Timed
     public List<PartsReadRepresentation> getParts(
-            @Context DSLContext database
+            @QueryParam("partN") Optional<Integer> partN,
+            @QueryParam("order") Optional<Integer> order,
+            @QueryParam("priceFrom") Optional<Double> priceFrom,
+            @QueryParam("priceTo") Optional<Double> priceTo,
+            @QueryParam("costFrom") Optional<Double> costFrom,
+            @QueryParam("costTo") Optional<Double> costTo,
+            @QueryParam("status") Optional<String> status,
+            @QueryParam("like") Optional<String> like,
+            @QueryParam("orderBy") Optional<String> orderBy,
+            @Context DSLContext database,
+            @CookieParam("FixerUID") int fixerUID
     ) {
+        int customer;
+
+        final UserFullReadRepresentation user =
+                UserReader.findUser(fixerUID)
+                        .apply(database)
+                        .orElseThrow(() -> new WebApplicationException(Response.Status.UNAUTHORIZED));
+
+        if(user.role.equals(Roles.CUSTOMER)){
+            final Record customerRecord =
+                    database.select(CUSTOMER_USERS.CID)
+                            .from(CUSTOMER_USERS)
+                            .where(CUSTOMER_USERS.CUID.eq(fixerUID))
+                            .fetchOne();
+            customer = customerRecord.getValue(CUSTOMER_USERS.CID);
+        }
+
+        /*return database.selectFrom(HASPARTS)
+                .fetchInto(HASPARTS)
+                .stream()
+                .map(part ->
+                        new PartsReadRepresentation(
+                                part.PARTNUM(),
+                                part.PARTNAME(),
+                                part.REPAIRSTATUS(),
+                                part.REPAIRCOST(),
+                                part.SELLPRICE(),
+                                part.REPAIRDATE(),
+                                part.PORDERNUM(),
+                                part.QTY()
+                        )
+                )
+                .collect(Collectors.toList());*/
+
         return database.selectFrom(HASPARTS)
+                .where(OptionalFilter
+                        .build()
+                        .add(partN.map(HASPARTS.PARTNUM::eq))
+                        .add(priceFrom.map(HASPARTS.SELLPRICE::ge))
+                        .add(priceTo.map(HASPARTS.SELLPRICE::le))
+                        .add(costFrom.map(HASPARTS.REPAIRCOST::ge))
+                        .add(costTo.map(HASPARTS.REPAIRCOST::le))
+                        .add(status.map(HASPARTS.REPAIRSTATUS::eq))
+                        //.add(like.map(HASPARTS.PARTNAME::contains))
+                        .combineWithAnd())
+                .orderBy(DSL.field(
+                        orderBy.orElse("partNum")
+                ))
                 .fetchInto(HASPARTS)
                 .stream()
                 .map(part ->

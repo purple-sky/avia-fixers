@@ -15,8 +15,8 @@
         <td>Repair Date</td>
         <td>Order Number</td>
         <td>Quantity</td>
-        <td>View</td>
-        <td>Delete</td>
+        <td ng-if="fixerUser.role == 'finance_employee' || fixerUser.role == 'repair_employee'">View</td>
+        <td ng-if="fixerUser.role == 'customer'">Delete</td>
     </tr>
     </thead>
     <tbody>
@@ -29,12 +29,16 @@
         <td ng-bind="part.repairDate"></td>
         <td ng-bind="part.orderNumber"></td>
         <td ng-bind="part.qtty"></td>
-        <td><button class="btn btn-default ttt" type="button" ng-click="updatePart(part.partNumber)">View</button></td>
-        <td><button class="btn btn-default" type="button" ng-click="deletePart(part.partNumber)">Delete</button></td>
+        <td ng-if="fixerUser.role == 'finance_employee' || fixerUser.role == 'repair_employee'">
+            <button class="btn btn-default ttt" type="button" ng-click="updatePart(part.partNumber)">View</button>
+        </td>
+        <td ng-if="fixerUser.role == 'customer'">
+            <button class="btn btn-default" type="button" ng-click="deletePart(part.partNumber)">Delete</button>
+        </td>
     </tr>
     </tbody>
 </table>
-<button class="btn btn-default" type="button" ng-click="acceptOrder(id)">Accept Order</button>
-<button class="btn btn-default" type="button" ng-click="onlinePayment(id)">Online Payment</button>
-<button class="btn btn-default" type="button" ng-click="offlinePayment(id)">Offline Payment</button>
-<button class="btn btn-default" type="button" ng-click="deleteOrder(id)">Delete Order</button>
+<button ng-if="fixerUser.role == 'customer'" class="btn btn-default" type="button" ng-click="acceptOrder(id)">Accept Order</button>
+<button ng-if="fixerUser.role == 'customer'" class="btn btn-default" type="button" ng-click="onlinePayment(id)">Online Payment</button>
+<button ng-if="fixerUser.role == 'finance_employee'" class="btn btn-default" type="button" ng-click="offlinePayment(id)">Offline Payment</button>
+<button ng-if="fixerUser.role == 'customer'" class="btn btn-default" type="button" ng-click="deleteOrder(id)">Delete Order</button>

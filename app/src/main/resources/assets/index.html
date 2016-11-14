@@ -18,7 +18,7 @@
 <nav class="navbar navbar-default" ng-if="fixerUser!=undefined">
     <ul class="nav navbar-nav">
         <li ng-if="fixerUser.role == 'finance_employee' || fixerUser.role == 'customer'"><a href="#!/view1">Orders</a></li>
-        <li ng-if="fixerUser.role == 'customer'"><a href="#!/view2">Add order</a></li>
+        <li ng-if="fixerUser.role == 'customer'"><a href="#!/orderForm">Add order</a></li>
         <li><a href="#!/viewParts">Parts</a></li>
         <li ng-if="fixerUser.role == 'repair_employee'"><a href="#!/repairs">Repairs</a></li>
         <li ng-if="fixerUser.role == 'finance_employee' || fixerUser.role == 'customer'"><a href="#!/viewPayments">Payments</a></li>
@@ -51,7 +51,7 @@
 <script src="app.js"></script>
 <script src="loginForm/loginForm.js"></script>
 <script src="view1/view1.js"></script>
-<script src="view2/view2.js"></script>
+<script src="orderForm/orderForm.js"></script>
 <script src="viewParts/viewParts.js"></script>
 <script src="viewOrder/viewOrder.js"></script>
 <script src="onlinePaymentForm/onlinePaymentForm.js"></script>
