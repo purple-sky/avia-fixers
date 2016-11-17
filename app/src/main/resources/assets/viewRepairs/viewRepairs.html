@@ -7,12 +7,32 @@
         <span class="caret"></span>
     </a>
     <ul class="dropdown-menu">
-        <li><a href="#">All</a></li>
-        <li><a href="#low">Low</a></li>
-        <li><a href="#medium">Medium</a></li>
-        <li><a href="#high">High</a></li>
+        <li><a ng-click="resetOrderBy()">All</a></li>
+        <li><a ng-click="setOrderBy('Low')">Low</a></li>
+        <li><a ng-click="setOrderBy('Medium')">Medium</a></li>
+        <li><a ng-click="setOrderBy('High')">High</a></li>
     </ul>
 </div>
+
+<form novalidate class="form">
+    <div class="form-group" >
+        <div class="input-group">
+            <input class="form-control" type="number" ng-model="where.partN" placeholder="Part number"/>
+            <input class="form-control" type="number" ng-model="where.order" placeholder="Order number"/>
+            <input class="form-control" type="number" ng-model="where.mechanic" placeholder="Repair person ID" />
+            <input class="form-control" type="text" ng-model="where.shop" placeholder="Shop #" />
+            <select class="form-control" ng-model="where.status">
+                <option value="all">-All-</option>
+                <option value="Low">Low</option>
+                <option value="Medium">Medium</option>
+                <option value="High">High</option>
+            </select>
+        </div>
+    </div>
+    <br />
+    <button class="btn btn-default" type="submit" ng-click="filter()">Filter</button>
+    <br />
+</form>
 
 <table class="table table-bordered table-striped">
     <thead>

@@ -9,14 +9,15 @@ angular.module('myApp.offlinePaymentForm', ['ngRoute'])
     });
 }])
 
-.controller('OfflinePaymentFormCtrl', ['$scope', '$http', '$location', '$routeParams', '$filter',function($scope, $http, $location, $routeParams, $filter) {
+.controller('OfflinePaymentFormCtrl', ['$scope', '$http', '$location', '$routeParams', '$filter', function($scope, $http, $location, $routeParams, $filter) {
     var currentId = $filter('limitTo')($routeParams.id, 12, 1);
     $scope.requisites = {orderNumber: currentId};
 
     $scope.submitCQPayment = function(){
         $http
             .post('/api/cheque', $scope.requisites)
-            .then(function(){$location.path('/view1')}, function(){});
+            .then(function(){$location.path('/viewOfflinePayments')}, function(){});
     }
+// TODO: add functionality to fill price to pay automatically
 
 }]);

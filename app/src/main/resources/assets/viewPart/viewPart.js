@@ -9,10 +9,10 @@ angular.module('myApp.viewPart', ['ngRoute'])
     });
 }])
 
-.controller('ViewPartCtrl', ['$scope', '$http', '$routeParams', '$location', '$filter', function($scope, $http, $routeParams, $location, $filter) {
+.controller('ViewPartCtrl', ['$scope', '$http', '$routeParams', '$location', '$filter', '$rootScope', function($scope, $http, $routeParams, $location, $filter, $rootScope) {
     var currId = $filter('limitTo')($routeParams.id, 12, 1);
     $scope.id = currId;
-    //$scope.part = {partNum: currId};
+    $scope.fixerUser = $rootScope.fixerUser;
 
     $scope.postUpdate = function () {
         $http

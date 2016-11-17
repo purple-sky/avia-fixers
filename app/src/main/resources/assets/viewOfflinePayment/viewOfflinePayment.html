@@ -13,7 +13,7 @@
         <td>Amount Paid</td>
         <td>Customer ID</td>
         <td>Payment Date</td>
-        <td>Responsible for transaction</td>
+        <td ng-if="fixerUser.role == 'finance_employee'">Responsible for transaction</td>
     </tr>
     </thead>
     <tbody>
@@ -23,7 +23,7 @@
         <td ng-bind="cqpayment.amount"></td>
         <td ng-bind="cqpayment.customerId"></td>
         <td ng-bind="cqpayment.date"></td>
-        <td ng-bind="cqpayment.financeEmployeeId"></td>
+        <td ng-if="fixerUser.role == 'finance_employee'" ng-bind="cqpayment.financeEmployeeId"></td>
     </tr>
     </tbody>
 </table>

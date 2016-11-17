@@ -12,12 +12,12 @@ import java.util.List;
 public class RepairWriteRepresentation {
 
 
-    public final int mechanic;
+    public final Integer mechanic;
     public final String status;
 
     @JsonCreator
     public RepairWriteRepresentation(
-            @JsonProperty("mechanic") int mechanic,
+            @JsonProperty("mechanic") Integer mechanic,
             @JsonProperty("status") String status
     ) {
 

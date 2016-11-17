@@ -2,12 +2,14 @@ package com.aviafix.resources;
 
 import com.aviafix.api.RepairReadRepresentation;
 import com.aviafix.api.RepairWriteRepresentation;
-import com.aviafix.core.OrderStatus;
-import com.aviafix.core.PartStatus;
-import com.aviafix.core.RepairPriority;
+import com.aviafix.api.UserFullReadRepresentation;
+import com.aviafix.core.*;
+import com.aviafix.tools.OptionalFilter;
 import com.codahale.metrics.annotation.Timed;
 import org.jooq.DSLContext;
 import org.jooq.Record;
+import org.jooq.impl.DSL;
+import org.jooq.types.Interval;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
@@ -24,6 +26,7 @@ import static com.aviafix.db.generated.tables.EMPLOYEE_USERS.EMPLOYEE_USERS;
 import static com.aviafix.db.generated.tables.REPAIRSHOP_EMPLOYEES.REPAIRSHOP_EMPLOYEES;
 import static org.jooq.impl.DSL.val;
 import java.time.temporal.ChronoUnit;
+import java.util.Optional;
 
 /**
  * Created by AlexB on 2016-11-11.
@@ -36,9 +39,23 @@ public class RepairScheduleResource {
     @GET
     @Timed
     public List<RepairReadRepresentation> getSchedule(
-            @Context DSLContext database
+            @QueryParam("partN") Optional<Integer> partN,
+            @QueryParam("order") Optional<Integer> order,
+            @QueryParam("mechanic") Optional<Integer> mechanic,
+            @QueryParam("shop") Optional<String> shop,
+            @Context DSLContext database,
+            @CookieParam("FixerUID") int fixerUID
     ) {
         LocalDate today = LocalDate.now();
+        final UserFullReadRepresentation user =
+                UserReader.findUser(fixerUID)
+                        .apply(database)
+                        .orElseThrow(() -> new WebApplicationException(Response.Status.UNAUTHORIZED));
+
+        if(!user.role.equals(Roles.REPAIR)){
+            throw new WebApplicationException(Response.Status.UNAUTHORIZED);
+        }
+
         List<RepairReadRepresentation> schedule =
                 database.select(
                         HASPARTS.PARTNUM,
@@ -54,8 +71,16 @@ public class RepairScheduleResource {
                         .leftJoin(REPAIR).on(HASPARTS.PARTNUM.eq(REPAIR.PNUMREPAIR))
                         .leftJoin(REPAIRSHOP_EMPLOYEES).on(REPAIR.ERIDREPAIR.eq(REPAIRSHOP_EMPLOYEES.REID))
                         .leftJoin(EMPLOYEE_USERS).on(REPAIR.ERIDREPAIR.eq(EMPLOYEE_USERS.EID))
-                .where(HASPARTS.REPAIRSTATUS.eq(PartStatus.IN_PROGRESS))
+                .where(HASPARTS.REPAIRSTATUS.eq(PartStatus.IN_PROGRESS)
+                        .and(OptionalFilter
+                                .build()
+                                .add(partN.map(HASPARTS.PARTNUM::eq))
+                                .add(order.map(HASPARTS.PORDERNUM::eq))
+                                .add(mechanic.map(REPAIR.ERIDREPAIR::eq))
+                                .add(shop.map(REPAIRSHOP_EMPLOYEES.SHOPNAME::contains))
+                                .combineWithAnd()))
                 .fetchInto(RepairReadRepresentation.class);
+
         for (RepairReadRepresentation r:schedule) {
             long daysBetween = ChronoUnit.DAYS.between(today, r.repairDate);
             if (daysBetween > 15) {
@@ -111,17 +136,20 @@ public class RepairScheduleResource {
     public Response repair (
             @Context DSLContext database,
             @PathParam("id") Integer id,
-            RepairWriteRepresentation repair
+            RepairWriteRepresentation repair,
+            @CookieParam("FixerUID") int fixerUID
     ) {
         Record record = database.select(HASPARTS.PARTNUM, HASPARTS.PORDERNUM, HASPARTS.REPAIRSTATUS)
                 .from(HASPARTS)
                 .where(HASPARTS.PARTNUM.eq(id))
                 .fetchOne();
-        Record record2 = database.select(EMPLOYEE_USERS.EID)
+
+        Record repairmanID = database.select(EMPLOYEE_USERS.EID)
                 .from(EMPLOYEE_USERS)
-                .where(EMPLOYEE_USERS.EID.eq(repair.mechanic))
+                .where(EMPLOYEE_USERS.EUID.eq(fixerUID))
                 .fetchOne();
-        if (record != null && record2 != null) {
+
+        if (record != null && repairmanID != null) {
             int order = record.getValue(HASPARTS.PORDERNUM, Integer.class);
             String status = record.getValue(HASPARTS.REPAIRSTATUS, String.class);
             if (status.equals(PartStatus.IN_PROGRESS)) {
@@ -131,34 +159,35 @@ public class RepairScheduleResource {
                         REPAIR.PNUMREPAIR,
                         REPAIR.ORDNUMREPAIR
                 )
-                        .values(repair.mechanic,
+                        .values(repairmanID.getValue(EMPLOYEE_USERS.EID),
                                 id,
                                 order)
                         .execute();
+            }
 
-                if (repair.status.equals(PartStatus.COMPLETE)) {
-                    database.update(HASPARTS)
-                            .set(HASPARTS.REPAIRSTATUS, repair.status)
-                            .where(HASPARTS.PARTNUM.equal(id))
-                            .execute();
+            if (repair.status.equals(PartStatus.COMPLETE)) {
+                database.update(HASPARTS)
+                        .set(HASPARTS.REPAIRSTATUS, repair.status)
+                        .set(HASPARTS.REPAIRDATE, LocalDate.now())
+                        .where(HASPARTS.PARTNUM.equal(id))
+                        .execute();
+
+                database.fetch("UPDATE orders SET orderRepairDate = (SELECT MAX(repairDate) FROM hasParts WHERE porderNum = ?) WHERE orderNum = ?", order, order)
+                        .format();
 
                     //check for all parts in order have "Complete" => update order status to "Complete"
 
-                    database.fetch("UPDATE orders SET orderStatus = CASE " +
-                            "WHEN (SELECT COUNT(*) FROM hasParts WHERE porderNum = ?) = " +
-                            "(SELECT COUNT(*) FROM hasParts WHERE porderNum = ? AND repairStatus = ?) " +
-                            "THEN ? ELSE ? END " +
-                            "WHERE orderNum = ?", order, order, PartStatus.COMPLETE, OrderStatus.COMPLETE, OrderStatus.IN_PROGRESS, order)
-                            .format();
-                }
+                database.fetch("UPDATE orders SET orderStatus = CASE " +
+                        "WHEN (SELECT COUNT(*) FROM hasParts WHERE porderNum = ?) = " +
+                        "(SELECT COUNT(*) FROM hasParts WHERE porderNum = ? AND repairStatus = ?) " +
+                        "THEN ? ELSE ? END " +
+                        "WHERE orderNum = ?", order, order, PartStatus.COMPLETE, OrderStatus.COMPLETE, OrderStatus.IN_PROGRESS, order)
+                        .format();
             }
-            return Response.created(
-                    URI.create(
-                            "/view1")).build();
+
+            return Response.ok().build();
         }
-        return Response.created(
-                URI.create(
-                        "/error")).build();
+        return Response.status(Response.Status.BAD_REQUEST).build();
     }
 
 }

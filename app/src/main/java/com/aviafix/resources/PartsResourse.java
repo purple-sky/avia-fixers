@@ -51,8 +51,6 @@ public class PartsResourse {
             @Context DSLContext database,
             @CookieParam("FixerUID") int fixerUID
     ) {
-        int customer;
-
         final UserFullReadRepresentation user =
                 UserReader.findUser(fixerUID)
                         .apply(database)
@@ -64,30 +62,40 @@ public class PartsResourse {
                             .from(CUSTOMER_USERS)
                             .where(CUSTOMER_USERS.CUID.eq(fixerUID))
                             .fetchOne();
-            customer = customerRecord.getValue(CUSTOMER_USERS.CID);
+            int customer = customerRecord.getValue(CUSTOMER_USERS.CID);
+
+            List<PartsReadRepresentation> parts =
+                    database.select(HASPARTS.PARTNUM, HASPARTS.PARTNAME, HASPARTS.REPAIRSTATUS,
+                            HASPARTS.REPAIRCOST,HASPARTS.SELLPRICE, HASPARTS.REPAIRDATE, HASPARTS.PORDERNUM, HASPARTS.QTY)
+                            .from(HASPARTS)
+                            .join(ORDERS)
+                            .on(HASPARTS.PORDERNUM.eq(ORDERS.ORDERNUM))
+                            .where(ORDERS.ORDERCID.eq(customer))
+                            .and(OptionalFilter
+                                            .build()
+                                            .add(partN.map(HASPARTS.PARTNUM::eq))
+                                            .add(order.map(HASPARTS.PORDERNUM::eq))
+                                            .add(priceFrom.map(HASPARTS.SELLPRICE::ge))
+                                            .add(priceTo.map(HASPARTS.SELLPRICE::le))
+                                            .add(costFrom.map(HASPARTS.REPAIRCOST::ge))
+                                            .add(costTo.map(HASPARTS.REPAIRCOST::le))
+                                            .add(status.map(HASPARTS.REPAIRSTATUS::eq))
+                                            .add(like.map(HASPARTS.PARTNAME::contains))
+                                            .combineWithAnd())
+                            .orderBy(DSL.field(
+                                    orderBy.orElse("partNum")
+                            ))
+                            .fetchInto(PartsReadRepresentation.class);
+            return parts;
+
+
         }
-
-        /*return database.selectFrom(HASPARTS)
-                .fetchInto(HASPARTS)
-                .stream()
-                .map(part ->
-                        new PartsReadRepresentation(
-                                part.PARTNUM(),
-                                part.PARTNAME(),
-                                part.REPAIRSTATUS(),
-                                part.REPAIRCOST(),
-                                part.SELLPRICE(),
-                                part.REPAIRDATE(),
-                                part.PORDERNUM(),
-                                part.QTY()
-                        )
-                )
-                .collect(Collectors.toList());*/
-
+        // TODO: think about join
         return database.selectFrom(HASPARTS)
                 .where(OptionalFilter
                         .build()
                         .add(partN.map(HASPARTS.PARTNUM::eq))
+                        .add(order.map(HASPARTS.PORDERNUM::eq))
                         .add(priceFrom.map(HASPARTS.SELLPRICE::ge))
                         .add(priceTo.map(HASPARTS.SELLPRICE::le))
                         .add(costFrom.map(HASPARTS.REPAIRCOST::ge))
@@ -113,6 +121,7 @@ public class PartsResourse {
                         )
                 )
                 .collect(Collectors.toList());
+
     }
 
     @GET
@@ -136,14 +145,12 @@ public class PartsResourse {
                 record.getValue(HASPARTS.PORDERNUM),
                 record.getValue(HASPARTS.QTY)
         );
-
-
     }
 
      @PUT
      @Timed
      @Consumes(MediaType.APPLICATION_JSON)
-     public String updatePart(
+     public Response updatePart(
              @Context DSLContext database,
              PartsUpdateRepresentation part
      ) {
@@ -165,31 +172,6 @@ public class PartsResourse {
              // check for part repair status not to be completed
             if (!record.getValue(HASPARTS.REPAIRSTATUS).equals(PartStatus.COMPLETE)) {
 
-                // updating status
-
-                if (part.repairStatus == null) {
-                    database.update(HASPARTS)
-                            .set(HASPARTS.REPAIRSTATUS, record.getValue(HASPARTS.REPAIRSTATUS, String.class))
-                            .where(HASPARTS.PARTNUM.equal(part.partNumber))
-                            .execute();
-                    System.out.println("Part #" + part.partNumber + " same status");
-                } else {
-                    database.update(HASPARTS)
-                            .set(HASPARTS.REPAIRSTATUS, part.repairStatus)
-                            .where(HASPARTS.PARTNUM.equal(part.partNumber))
-                            .execute();
-                    //System.out.println("Part #" + part.partNumber + " new status");
-
-                    //check for all parts in order have "Complete" => update order status to "Complete"
-
-                    database.fetch("UPDATE orders SET orderStatus = CASE " +
-                            "WHEN (SELECT COUNT(*) FROM hasParts WHERE porderNum = ?) = " +
-                            "(SELECT COUNT(*) FROM hasParts WHERE porderNum = ? AND repairStatus = ?) " +
-                            "THEN ? ELSE ? END " +
-                            "WHERE orderNum = ?", ordNum, ordNum, PartStatus.COMPLETE, OrderStatus.COMPLETE, OrderStatus.IN_PROGRESS, ordNum)
-                            .format();
-                }
-
                 // updating repair cost
 
                 if (part.repairCost == null) {
@@ -205,9 +187,8 @@ public class PartsResourse {
                                 .set(HASPARTS.REPAIRCOST, part.repairCost)
                                 .where(HASPARTS.PARTNUM.equal(part.partNumber))
                                 .execute();
-                        System.out.println("Part #" + part.partNumber + " new cost");
                     } else {
-                        return "Part #" + part.partNumber + " can't update price, because contract is signed";
+                        return Response.status(Response.Status.BAD_REQUEST).build();
                     }
                 }
 
@@ -231,12 +212,8 @@ public class PartsResourse {
 
                         database.fetch("UPDATE orders SET totalPrice = (SELECT ROUND(sum(sellPrice * qty), 2) FROM hasParts WHERE porderNum = ?) WHERE orderNum = ?", ordNum, ordNum)
                                 .format();
-
-                        System.out.println("Part #" + part.partNumber + " new sell price");
-
                     } else {
-
-                        return "Part #" + part.partNumber + " can't update price, because contract is signed";
+                        return Response.status(Response.Status.METHOD_NOT_ALLOWED).build();
                     }
                 }
 
@@ -253,25 +230,52 @@ public class PartsResourse {
                             .set(HASPARTS.REPAIRDATE, part.repairDate)
                             .where(HASPARTS.PARTNUM.equal(part.partNumber))
                             .execute();
-                    System.out.println("Part #" + part.partNumber + " new repair date");
-
                     // update Order repair date = max repair date for all parts
 
                     database.fetch("UPDATE orders SET orderRepairDate = (SELECT MAX(repairDate) FROM hasParts WHERE porderNum = ?) WHERE orderNum = ?", ordNum, ordNum)
                             .format();
                 }
 
-                return "Part #" + part.partNumber + " updated";
-            } return "Part #" + part.partNumber + " already completed";
+                // updating status
+
+                if (part.repairStatus == null) {
+                    database.update(HASPARTS)
+                            .set(HASPARTS.REPAIRSTATUS, record.getValue(HASPARTS.REPAIRSTATUS, String.class))
+                            .where(HASPARTS.PARTNUM.equal(part.partNumber))
+                            .execute();
+                } else {
+                    database.update(HASPARTS)
+                            .set(HASPARTS.REPAIRSTATUS, part.repairStatus)
+                            .where(HASPARTS.PARTNUM.equal(part.partNumber))
+                            .execute();
+
+                    // update dates in case something was changed
+
+                    database.fetch("UPDATE orders SET orderRepairDate = (SELECT MAX(repairDate) FROM hasParts WHERE porderNum = ?) WHERE orderNum = ?", ordNum, ordNum)
+                            .format();
+
+                    //check for all parts in order have "Complete" => update order status to "Complete"
+                    if (part.repairStatus.equals(PartStatus.COMPLETE)) {
+                        database.fetch("UPDATE orders SET orderStatus = CASE " +
+                                "WHEN (SELECT COUNT(*) FROM hasParts WHERE porderNum = ?) = " +
+                                "(SELECT COUNT(*) FROM hasParts WHERE porderNum = ? AND repairStatus = ?) " +
+                                "THEN ? ELSE ? END " +
+                                "WHERE orderNum = ?", ordNum, ordNum, PartStatus.COMPLETE, OrderStatus.COMPLETE, OrderStatus.IN_PROGRESS, ordNum)
+                                .format();
+                    }
+                }
+
+                return Response.ok().build();
+            } return Response.status(Response.Status.METHOD_NOT_ALLOWED).build();
          } else {
-             return "Part #" + part.partNumber + " doesn't exist";
+             return Response.status(Response.Status.BAD_REQUEST).build();
          }
 
      }
 
     @DELETE
     @Path("/{id}")
-    public void deletePart (
+    public Response deletePart (
             @Context DSLContext database,
             @PathParam("id") Integer id
     ) {
@@ -292,7 +296,7 @@ public class PartsResourse {
                             .where(HASPARTS.PARTNUM.equal(id))
                             .execute();
                 } catch (Exception e) {
-                    //return "Sorry something went wrong";
+                    return Response.status(Response.Status.BAD_REQUEST).build();
                 }
 
                 // Code below checks whether or not order has other parts.
@@ -313,12 +317,11 @@ public class PartsResourse {
                     database.fetch("UPDATE orders SET totalPrice = (SELECT ROUND(sum(sellPrice * qty), 2) FROM hasParts WHERE porderNum = ?) WHERE orderNum = ?", ordNum, ordNum)
                             .format();
                 }
-
-                //return "Part #" + id + " deleted";
+                return Response.ok().build();
             }
-            //return "Part #" + id + " can't be deleted";
+            return Response.status(Response.Status.METHOD_NOT_ALLOWED).build();
         }
-        //return "Part doesn't exist";
+        return Response.status(Response.Status.BAD_REQUEST).build();
     }
 
 }

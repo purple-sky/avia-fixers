@@ -6,12 +6,28 @@
         <span class="caret"></span>
     </a>
     <ul class="dropdown-menu">
-        <li><a class="dropdown-item" href="#">None</a></li>
-        <li><a class="dropdown-item" href="#">By order ID</a></li>
-        <li><a class="dropdown-item" href="#">By customer #</a></li>
-        <li><a class="dropdown-item" href="#">By payment date</a></li>
+        <li><a class="dropdown-item" ng-click="resetOrderBy()">None</a></li>
+        <li><a class="dropdown-item" ng-click="setOrderBy('orNumpayOffline')">By order ID</a></li>
+        <li ng-if="fixerUser.role == 'finance_employee'"><a class="dropdown-item" ng-click="setOrderBy('cidpayOffline')">By customer #</a></li>
+        <li><a class="dropdown-item" ng-click="setOrderBy('pymntDatepayOffline')">By payment date</a></li>
+
     </ul>
 </div>
+
+<form novalidate class="form">
+    <div class="form-group" >
+        <div class="input-group">
+            <input class="form-control" type="number" ng-model="where.cheque" placeholder="Cheque number"/>
+            <input class="form-control" type="number" ng-model="where.order" placeholder="Order number"/>
+            <input ng-if="fixerUser.role == 'finance_employee'" class="form-control" type="number" ng-model="where.customer" placeholder="Customer #"/>
+            <input class="form-control" type="number" ng-model="where.priceFrom" placeholder="Price from" />
+            <input class="form-control" type="number" ng-model="where.priceTo" placeholder="Price To" />
+        </div>
+    </div>
+    <br />
+    <button class="btn btn-default" type="submit" ng-click="filter()">Filter</button>
+    <br />
+</form>
 
 
 <table class="table table-bordered table-striped">
@@ -19,6 +35,7 @@
     <tr>
         <td>Cheque #</td>
         <td>Order #</td>
+        <td ng-if="fixerUser.role == 'finance_employee'">Customer #</td>
         <td>Payment Date</td>
         <td>Amount</td>
         <td>Bank</td>
@@ -27,6 +44,7 @@
     <tr ng-repeat="payment in payments">
         <td ng-bind="payment.chequeNumber"></td>
         <td ng-bind="payment.orderNumber"></td>
+        <td ng-if="fixerUser.role == 'finance_employee'" ng-bind="payment.customerId"></td>
         <td ng-bind="payment.date"></td>
         <td ng-bind="payment.amount"></td>
         <td ng-bind="payment.bank"></td>
@@ -34,5 +52,3 @@
     </tr>
     </tbody>
 </table>
-
-

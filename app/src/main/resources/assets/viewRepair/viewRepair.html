@@ -33,13 +33,9 @@
     </tbody>
 </table>
 
-<form novalidate class="form">
-    <div class="form-group" >
-        <div class="input-group">
-            <input type="number" ng-model="repair.mechanic" placeholder="Repair person ID" />
-            <input type="text" ng-model="repair.status" placeholder="Part Status" />
-        </div>
-    </div>
-    <br />
-    <button class="btn btn-default" type="submit" ng-click="updateRepair()">Submit Repair</button>
-</form>
+<select class="form-control" ng-model="repair.status">
+    <option value="InProgress">In Progress</option>
+    <option value="Complete">Complete</option>
+</select>
+<br />
+<button class="btn btn-default" type="submit" ng-click="updateRepair()">Submit Repair</button>

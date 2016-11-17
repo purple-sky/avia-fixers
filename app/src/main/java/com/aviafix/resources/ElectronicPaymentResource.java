@@ -1,13 +1,15 @@
 package com.aviafix.resources;
 
-import com.aviafix.api.ChequeReadRepresentation;
-import com.aviafix.api.ElectronicPaymentReadRepresentation;
-import com.aviafix.api.ElectronicPaymentWriteRepresentation;
-import com.aviafix.api.OrderWriteRepresentation;
+import com.aviafix.api.*;
 import com.aviafix.core.OrderStatus;
+import com.aviafix.core.Roles;
+import com.aviafix.core.UserReader;
+import com.aviafix.db.generated.tables.CUSTOMER_USERS;
+import com.aviafix.tools.OptionalFilter;
 import com.codahale.metrics.annotation.Timed;
 import org.jooq.DSLContext;
 import org.jooq.Record;
+import org.jooq.impl.DSL;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
@@ -15,11 +17,12 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 
 import static com.aviafix.db.generated.tables.ORDERS.ORDERS;
 import static com.aviafix.db.generated.tables.PAYBYCHEQUE.PAYBYCHEQUE;
 import static com.aviafix.db.generated.tables.PAYBYCREDITCARD.PAYBYCREDITCARD;
-import static com.aviafix.db.generated.tables.PAYOFFLINE.PAYOFFLINE;
+import static com.aviafix.db.generated.tables.CUSTOMER_USERS.CUSTOMER_USERS;
 import static com.aviafix.db.generated.tables.PAYONLINE.PAYONLINE;
 import static org.jooq.impl.DSL.val;
 
@@ -33,8 +36,28 @@ public class ElectronicPaymentResource {
     @GET
     @Timed
     public List<ElectronicPaymentReadRepresentation> getEpayments(
-            @Context DSLContext database
+            @QueryParam("order") Optional<Integer> order,
+            @QueryParam("customer") Optional<Integer> customer,
+            @QueryParam("priceFrom") Optional<Double> priceFrom,
+            @QueryParam("priceTo") Optional<Double> priceTo,
+            @QueryParam("etid") Optional<Integer> etid,
+            @QueryParam("orderBy") Optional<String> orderBy,
+            @Context DSLContext database,
+            @CookieParam("FixerUID") int fixerUID
     ) {
+        final UserFullReadRepresentation user =
+                UserReader.findUser(fixerUID)
+                        .apply(database)
+                        .orElseThrow(() -> new WebApplicationException(Response.Status.UNAUTHORIZED));
+
+        if(user.role.equals(Roles.REPAIR)){
+            throw new WebApplicationException(Response.Status.UNAUTHORIZED);
+        }
+
+        if(!user.role.equals(Roles.FINANCE)){
+            customer = Optional.of(user.customerId);
+        }
+
         List<ElectronicPaymentReadRepresentation> representations = database.select(
                     PAYBYCREDITCARD.ETID,
                     PAYONLINE.ORDNUMPAYONL,
@@ -48,12 +71,22 @@ public class ElectronicPaymentResource {
                 .from(PAYBYCREDITCARD)
                 .join(PAYONLINE)
                 .on(PAYBYCREDITCARD.ETID.equal(PAYONLINE.ETIDPAYONLINE))
+                .where(OptionalFilter
+                        .build()
+                        .add(order.map(PAYONLINE.ORDNUMPAYONL::eq))
+                        .add(customer.map(PAYONLINE.CIDPAYONLINE::eq))
+                        .add(etid.map(PAYBYCREDITCARD.ETID::eq))
+                        .add(priceFrom.map(PAYBYCREDITCARD.AMOUNT::ge))
+                        .add(priceTo.map(PAYBYCREDITCARD.AMOUNT::le))
+                        .combineWithAnd())
+                .orderBy(DSL.field(
+                        orderBy.orElse("ETID")
+                ))
                 .fetchInto(ElectronicPaymentReadRepresentation.class);
 
         return representations;
     }
 
-    // TODO: make return an object
     @GET
     @Path("/{id}")
     @Timed
@@ -96,67 +129,84 @@ public class ElectronicPaymentResource {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response postEPayment(
             @Context DSLContext database,
-            ElectronicPaymentWriteRepresentation epayment
+            ElectronicPaymentWriteRepresentation epayment,
+            @CookieParam("FixerUID") int fixerUID
+
     ) {
+        final UserFullReadRepresentation user =
+                UserReader.findUser(fixerUID)
+                        .apply(database)
+                        .orElseThrow(() -> new WebApplicationException(Response.Status.UNAUTHORIZED));
 
-        Record record = database.insertInto(
-                PAYBYCREDITCARD,
-                PAYBYCREDITCARD.CREDITCARDNUM,
-                PAYBYCREDITCARD.EXPDATE,
-                PAYBYCREDITCARD.CODE,
-                PAYBYCREDITCARD.CARDHOLDERNAME,
-                PAYBYCREDITCARD.AMOUNT
-        ).values(
-                epayment.creditCardNumber,
-                epayment.expiryDate,
-                epayment.cardCode,
-                epayment.cardHolderName,
-                epayment.paymentAmount
-        ).returning(
-                PAYBYCREDITCARD.ETID
-        ).fetchOne();
-
-        final int ETID = record.getValue(PAYBYCREDITCARD.ETID);
-
-        database.insertInto(
-                PAYONLINE,
-                PAYONLINE.CIDPAYONLINE,
-                PAYONLINE.ORDNUMPAYONL,
-                PAYONLINE.ETIDPAYONLINE,
-                PAYONLINE.PYMNTDATEONLINE
-        ).values(
-                epayment.customerID,
-                epayment.orderNumber,
-                ETID,
-                epayment.paymentDate
-        ).execute();
-
-        final int orderID = epayment.orderNumber;
-
-        Record record2 = database.select(
-                ORDERS.ORDERNUM,
-                ORDERS.ORDERCID,
-                ORDERS.ORDERSTATUS
-        )
-                .from(ORDERS)
-                .where(ORDERS.ORDERNUM.equal(orderID), ORDERS.ORDERSTATUS.equal(OrderStatus.COMPLETE))
-                .fetchOne();
-
-        if (record2 != null) {
-            database.update(ORDERS)
-                    .set(ORDERS.ORDERSTATUS, OrderStatus.PAID)
-                    .where(ORDERS.ORDERNUM.equal(orderID))
-                    .execute();
+        if(!user.role.equals(Roles.CUSTOMER)){
+            throw new WebApplicationException(Response.Status.UNAUTHORIZED);
         }
 
-        return Response.created(
-                URI.create(
-                        "epayments/" + ETID)/*database
-                        .select(DSL.max(DSL.field("ETID", int.class)))
-                        .from(DSL.table("payByCreditCard"))
-                        .fetchOne(0, int.class)
-                )*/
-        ).build();
+        Record rec = database.select(CUSTOMER_USERS.CID)
+                .from(CUSTOMER_USERS)
+                .where(CUSTOMER_USERS.CUID.eq(fixerUID))
+                .fetchOne();
+
+        int customerID = rec.getValue(CUSTOMER_USERS.CID);
+
+        if (epayment.paymentAmount <= 5000) {
+
+            final int orderID = epayment.orderNumber;
+
+            Record record2 = database.select(
+                    ORDERS.ORDERNUM,
+                    ORDERS.ORDERCID,
+                    ORDERS.ORDERSTATUS
+            )
+                    .from(ORDERS)
+                    .where(ORDERS.ORDERNUM.equal(orderID), ORDERS.ORDERSTATUS.equal(OrderStatus.COMPLETE))
+                    .fetchOne();
+
+            if (record2 != null) {
+
+                Record record = database.insertInto(
+                        PAYBYCREDITCARD,
+                        PAYBYCREDITCARD.CREDITCARDNUM,
+                        PAYBYCREDITCARD.EXPDATE,
+                        PAYBYCREDITCARD.CODE,
+                        PAYBYCREDITCARD.CARDHOLDERNAME,
+                        PAYBYCREDITCARD.AMOUNT
+                ).values(
+                        epayment.creditCardNumber,
+                        epayment.expiryDate,
+                        epayment.cardCode,
+                        epayment.cardHolderName,
+                        epayment.paymentAmount
+                ).returning(
+                        PAYBYCREDITCARD.ETID
+                ).fetchOne();
+
+                final int ETID = record.getValue(PAYBYCREDITCARD.ETID);
+
+                database.insertInto(
+                        PAYONLINE,
+                        PAYONLINE.CIDPAYONLINE,
+                        PAYONLINE.ORDNUMPAYONL,
+                        PAYONLINE.ETIDPAYONLINE,
+                        PAYONLINE.PYMNTDATEONLINE
+                ).values(
+                        customerID,
+                        epayment.orderNumber,
+                        ETID,
+                        epayment.paymentDate
+                ).execute();
+
+
+                database.update(ORDERS)
+                        .set(ORDERS.ORDERSTATUS, OrderStatus.PAID)
+                        .where(ORDERS.ORDERNUM.equal(orderID))
+                        .execute();
+
+                return Response.ok().build();
+            }
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        }
+        return Response.status(Response.Status.METHOD_NOT_ALLOWED).build();
     }
 
 }

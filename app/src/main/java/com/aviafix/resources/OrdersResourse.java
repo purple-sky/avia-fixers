@@ -160,20 +160,13 @@ public class OrdersResourse {
             ).execute();
         }
 
-        return Response.created(
-                URI.create(
-                    "orders/" + oredrId)/*database
-                        .select(DSL.max(DSL.field("orderNum", int.class)))
-                        .from(DSL.table("orders"))
-                        .fetchOne(0, int.class)
-                )*/
-        ).build();
+        return Response.ok().build();
     }
 
     @PUT
     @Path("/:{id}")
     @Timed
-    public String updateOrder (
+    public Response updateOrder (
             @Context DSLContext database,
             @PathParam("id") Integer id,
             OrderWriteRepresentation order
@@ -202,15 +195,15 @@ public class OrdersResourse {
                         .where(HASPARTS.PORDERNUM.equal(id))
                         .execute();
             }
-            return "Order #" + id + " updated";
+            return Response.ok().build();
         }
 
-        return "Order doesn't exist";
+        return Response.status(Response.Status.BAD_REQUEST).build();
     }
 
     @DELETE
     @Path("/:{id}")
-    public String deleteOrder (
+    public Response deleteOrder (
             @Context DSLContext database,
             @PathParam("id") Integer id
             ) {
@@ -228,14 +221,14 @@ public class OrdersResourse {
                             .where(ORDERS.ORDERNUM.equal(id))
                             .execute();
                 } catch (Exception e) {
-                    return "Sorry something went wrong";
+                    return Response.serverError().build();
                 }
 
-                return "Order #" + id + " deleted";
+                return Response.ok().build();
             }
-            return "Order #" + id + " can't be deleted";
+            return Response.notModified().build();
         }
-        return "Order doesn't exist";
+        return Response.status(Response.Status.BAD_REQUEST).build();
     }
 
 

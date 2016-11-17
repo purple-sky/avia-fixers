@@ -3,10 +3,15 @@ package com.aviafix.resources;
 import com.aviafix.api.ChequeReadRepresentation;
 import com.aviafix.api.ChequeWriteRepresentation;
 import com.aviafix.api.TotalPaymentRepresentation;
+import com.aviafix.api.UserFullReadRepresentation;
 import com.aviafix.core.OrderStatus;
+import com.aviafix.core.Roles;
+import com.aviafix.core.UserReader;
+import com.aviafix.tools.OptionalFilter;
 import com.codahale.metrics.annotation.Timed;
 import org.jooq.DSLContext;
 import org.jooq.Record;
+import org.jooq.impl.DSL;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
@@ -14,16 +19,19 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 
+import static com.aviafix.db.generated.tables.CUSTOMER_USERS.CUSTOMER_USERS;
 import static com.aviafix.db.generated.tables.ORDERS.ORDERS;
 import static com.aviafix.db.generated.tables.PAYBYCHEQUE.PAYBYCHEQUE;
 import static com.aviafix.db.generated.tables.PAYBYCREDITCARD.PAYBYCREDITCARD;
 import static com.aviafix.db.generated.tables.PAYOFFLINE.PAYOFFLINE;
-import static com.aviafix.db.generated.tables.PAYONLINE.PAYONLINE;
+import static com.aviafix.db.generated.tables.EMPLOYEE_USERS.EMPLOYEE_USERS;
 import static org.jooq.impl.DSL.val;
 
 /**
  * Created by paull on 1/11/2016.
+ * Modified by AlexB on 16/11/2016
  */
 
 @Path("/cheque")
@@ -38,8 +46,28 @@ public class ChequeResource {
     @GET
     @Timed
     public List<ChequeReadRepresentation> getOrders(
-            @Context DSLContext database
+            @QueryParam("order") Optional<Integer> order,
+            @QueryParam("customer") Optional<Integer> customer,
+            @QueryParam("priceFrom") Optional<Double> priceFrom,
+            @QueryParam("priceTo") Optional<Double> priceTo,
+            @QueryParam("cheque") Optional<Integer> cheque,
+            @QueryParam("orderBy") Optional<String> orderBy,
+            @Context DSLContext database,
+            @CookieParam("FixerUID") int fixerUID
     ) {
+        final UserFullReadRepresentation user =
+                UserReader.findUser(fixerUID)
+                        .apply(database)
+                        .orElseThrow(() -> new WebApplicationException(Response.Status.UNAUTHORIZED));
+
+        if(user.role.equals(Roles.REPAIR)){
+            throw new WebApplicationException(Response.Status.UNAUTHORIZED);
+        }
+
+        if(!user.role.equals(Roles.FINANCE)){
+            customer = Optional.of(user.customerId);
+        }
+
         List<ChequeReadRepresentation> representations = database.select(
                 PAYBYCHEQUE.CHEQUENUM,
                 PAYBYCHEQUE.BANK,
@@ -51,12 +79,22 @@ public class ChequeResource {
                 .from(PAYBYCHEQUE)
                 .join(PAYOFFLINE)
                 .on(PAYBYCHEQUE.CHEQUENUM.equal(PAYOFFLINE.CQNUMPAYOFFLINE))
+                .where(OptionalFilter
+                        .build()
+                        .add(order.map(PAYOFFLINE.ORNUMPAYOFFLINE::eq))
+                        .add(customer.map(PAYOFFLINE.CIDPAYOFFLINE::eq))
+                        .add(cheque.map(PAYBYCHEQUE.CHEQUENUM::eq))
+                        .add(priceFrom.map(PAYBYCHEQUE.AMOUNT::ge))
+                        .add(priceTo.map(PAYBYCHEQUE.AMOUNT::le))
+                        .combineWithAnd())
+                .orderBy(DSL.field(
+                        orderBy.orElse("chequeNum")
+                ))
                 .fetchInto(ChequeReadRepresentation.class);
 
         return representations;
     }
 
-    // TODO: make return an object
     @GET
     @Path("/{id}")
     @Timed
@@ -97,8 +135,26 @@ public class ChequeResource {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response postCheque(
             @Context DSLContext database,
-            ChequeWriteRepresentation cheque
+            ChequeWriteRepresentation cheque,
+            @CookieParam("FixerUID") int fixerUID
     ) {
+
+        final UserFullReadRepresentation user =
+                UserReader.findUser(fixerUID)
+                        .apply(database)
+                        .orElseThrow(() -> new WebApplicationException(Response.Status.UNAUTHORIZED));
+
+        if(!user.role.equals(Roles.FINANCE)){
+            throw new WebApplicationException(Response.Status.UNAUTHORIZED);
+        }
+
+        /*Record rec = database.select(EMPLOYEE_USERS.EID)
+                .from(EMPLOYEE_USERS)
+                .where(EMPLOYEE_USERS.EUID.eq(fixerUID))
+                .fetchOne();
+*/
+        //int employeeID = rec.getValue(EMPLOYEE_USERS.EID);
+        int employeeID = user.employeeId;
 
         final Record orderRecord = database.select(ORDERS.ORDERNUM, ORDERS.ORDERSTATUS)
                 .from(ORDERS)
@@ -129,7 +185,7 @@ public class ChequeResource {
                     cheque.customerId,
                     cheque.chequeNumber,
                     cheque.orderNumber,
-                    cheque.financeEmployeeId,
+                    employeeID,
                     cheque.date
             ).execute();
 
@@ -143,15 +199,10 @@ public class ChequeResource {
         don't think about record
         update order status //OrderStatus.PAID
         */
-            return Response.created(
-                    URI.create("cheque/" + cheque.chequeNumber))
-                    .build();
+            return Response.ok().build();
 
         }
-        return Response.created(
-                URI.create(
-                        "orders/error"))
-                .build();
+        return Response.status(Response.Status.METHOD_NOT_ALLOWED).build();
     }
 
     /*

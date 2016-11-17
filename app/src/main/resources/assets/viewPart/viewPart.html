@@ -7,15 +7,23 @@
 
 <table class="table table-bordered table-striped">
     <thead>
-    <tr><td>Part Number</td><td>Part Name</td><td>Repair Status</td><td>Repair Cost</td><td>Sell Price</td><td>Repair Date</td><td>Order Number</td><td>Quantity</td></tr>
+    <tr>
+        <td>Part Number</td>
+        <td>Part Name</td>
+        <td>Repair Status</td>
+        <td ng-if="fixerUser.role == 'finance_employee'">Repair Cost</td>
+        <td ng-if="fixerUser.role == 'finance_employee'">Sell Price</td>
+        <td>Repair Date</td>
+        <td>Order Number</td>
+        <td>Quantity</td></tr>
     </thead>
     <tbody>
     <tr>
         <td ng-bind="part.partNumber"></td>
         <td ng-bind="part.name"></td>
         <td ng-bind="part.repairStatus"></td>
-        <td ng-bind="part.repairCost"></td>
-        <td ng-bind="part.sellPrice"></td>
+        <td ng-if="fixerUser.role == 'finance_employee'" ng-bind="part.repairCost"></td>
+        <td ng-if="fixerUser.role == 'finance_employee'" ng-bind="part.sellPrice"></td>
         <td ng-bind="part.repairDate"></td>
         <td ng-bind="part.orderNumber"></td>
         <td ng-bind="part.qtty"></td>
@@ -26,10 +34,10 @@
 <form novalidate class="form">
     <div class="form-group">
         <div class="input-group">
-            <input type="text" ng-model="part.repairStatus" placeholder="Repair Status" />
-            <input type="number" ng-model="part.repairCost" placeholder="Repair Cost" />
-            <input type="number" ng-model="part.sellPrice" placeholder="Sell Price" />
-            <input type="date" ng-model="part.repairDate" placeholder="Repair Date" />
+            <input ng-if="fixerUser.role == 'repair_employee'" type="text" ng-model="part.repairStatus" placeholder="Repair Status" />
+            <input ng-if="fixerUser.role == 'finance_employee'" type="number" ng-model="part.repairCost" placeholder="Repair Cost" />
+            <input ng-if="fixerUser.role == 'finance_employee'" type="number" ng-model="part.sellPrice" placeholder="Sell Price" />
+            <input ng-if="fixerUser.role == 'repair_employee'" type="date" ng-model="part.repairDate" placeholder="Repair Date" />
         </div>
     </div>
     <br />

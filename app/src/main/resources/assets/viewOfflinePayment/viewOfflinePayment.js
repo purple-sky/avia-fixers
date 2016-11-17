@@ -9,9 +9,10 @@ angular.module('myApp.viewOfflinePayment', ['ngRoute'])
     });
 }])
 
-.controller('ViewOfflinePaymentCtrl', ['$scope', '$http', '$routeParams', '$location', '$filter', function($scope, $http, $routeParams, $location, $filter) {
+.controller('ViewOfflinePaymentCtrl', ['$scope', '$http', '$routeParams', '$location', '$filter', '$rootScope', function($scope, $http, $routeParams, $location, $filter, $rootScope) {
     var currentId = $filter('limitTo')($routeParams.id, 20, 1);
     $scope.id = currentId;
+    $scope.fixerUser = $rootScope.fixerUser;
 
 
     $http

@@ -15,7 +15,7 @@
         <td>Payment Date</td>
         <td>Credit Card #</td>
         <td>Card Holder</td>
-        <td>Expiry date</td>
+        <td ng-if="fixerUser.role == 'customer'">Expiry date</td>
     </tr>
     </thead>
     <tbody>
@@ -27,7 +27,7 @@
         <td ng-bind="epayment.paymentDate"></td>
         <td ng-bind="epayment.creditCardNumber"></td>
         <td ng-bind="epayment.cardHolderName"></td>
-        <td ng-bind="epayment.expiryDate"></td>
+        <td ng-if="fixerUser.role == 'customer'" ng-bind="epayment.expiryDate"></td>
     </tr>
     </tbody>
 </table>

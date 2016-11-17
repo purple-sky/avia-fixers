@@ -6,9 +6,11 @@
         <span class="caret"></span>
     </a>
     <ul class="dropdown-menu">
-        <li><a class="dropdown-item" href="#" ng-click="resetOrderBy()">None (Order ID)</a></li>
-        <li><a class="dropdown-item" href="#" ng-click="setOrderBy('ordercID')">By customer #</a></li>
-        <li><a class="dropdown-item" href="#" ng-click="setOrderBy('orderStatus')">By order status</a></li>
+        <li><a class="dropdown-item" ng-click="resetOrderBy()">None (Order ID)</a></li>
+        <li ng-if="fixerUser.role == 'finance_employee'"><a class="dropdown-item" ng-click="setOrderBy('ordercID')">By customer #</a></li>
+        <li><a class="dropdown-item" ng-click="setOrderBy('date')">By date</a></li>
+        <li><a class="dropdown-item" ng-click="setOrderBy('orderRepairDate')">By repair date</a></li>
+        <li><a class="dropdown-item" ng-click="setOrderBy('orderStatus')">By order status</a></li>
     </ul>
 </div>
 
@@ -16,7 +18,7 @@
     <div class="form-group" >
         <div class="input-group">
             <input class="form-control" type="number" ng-model="where.order" placeholder="Order number"/>
-            <input class="form-control" type="number" ng-model="where.customer" placeholder="Customer #"/>
+            <input ng-if="fixerUser.role == 'finance_employee'" class="form-control" type="number" ng-model="where.customer" placeholder="Customer #"/>
             <input class="form-control" type="number" ng-model="where.priceFrom" placeholder="Price from" />
             <input class="form-control" type="number" ng-model="where.priceTo" placeholder="Price To" />
             <select class="form-control" ng-model="where.status">
@@ -30,16 +32,29 @@
     </div>
     <br />
     <button class="btn btn-default" type="submit" ng-click="filter()">Filter</button>
+    <br />
 </form>
 
 
 <table class="table table-bordered table-striped">
     <thead>
-    <tr><td>Id</td><td>Date</td><td>Status</td><td>Repair Date</td><td>Customer Id</td><td>Total Price</td></tr>
+    <tr>
+        <td>Id</td>
+        <td>Date</td>
+        <td>Status</td>
+        <td>Repair Date</td>
+        <td>Customer Id</td>
+        <td>Total Price</td>
+    </tr>
     </thead>
     <tbody>
     <tr ng-repeat="order in orders">
-        <td ng-bind="order.id"></td><td ng-bind="order.date"></td><td ng-bind="order.status"></td><td ng-bind="order.repairDate"></td><td ng-bind="order.customerId"></td><td ng-bind="order.totalPrice"></td>
+        <td ng-bind="order.id"></td>
+        <td ng-bind="order.date"></td>
+        <td ng-bind="order.status"></td>
+        <td ng-bind="order.repairDate"></td>
+        <td ng-bind="order.customerId"></td>
+        <td ng-bind="order.totalPrice"></td>
         <td><button class="btn btn-default" type="button" ng-click="viewOrder(order.id)">View</button></td>
     </tr>
     </tbody>

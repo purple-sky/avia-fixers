@@ -6,17 +6,19 @@
         <span class="caret"></span>
     </a>
     <ul class="dropdown-menu">
-        <li><a class="dropdown-item" href="#">None</a></li>
-        <li><a class="dropdown-item" href="#">By order ID</a></li>
-        <li><a class="dropdown-item" href="#">By customer #</a></li>
-        <li><a class="dropdown-item" href="#">By payment date</a></li>
+        <li><a class="dropdown-item" ng-click="resetOrderBy()">None (Payment ID)</a></li>
+        <li><a class="dropdown-item" ng-click="setOrderBy('ORDER1')">By order #</a></li>
+        <li ng-if="fixerUser.role == 'finance_employee'"><a class="dropdown-item" ng-click="setOrderBy('CLIENT')">By customer #</a></li>
+        <li><a class="dropdown-item" ng-click="setOrderBy('DATE1')">By date #</a></li>
+        <li><a class="dropdown-item" ng-click="setOrderBy('AMOUNT1')">By amount</a></li>
+        <li><a class="dropdown-item" ng-click="setOrderBy('TYPE1')">By type</a></li>
     </ul>
 </div>
 
 
 <div class="btn-group">
     <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" >
-        Payment type
+        View payments separately
         <span class="caret"></span>
     </a>
     <ul class="dropdown-menu">
@@ -28,13 +30,11 @@
 <form novalidate class="form">
     <div class="form-group" >
         <div class="input-group">
-            <input type="number" ng-model="where.customer" placeholder="Customer #"/>
+            <input ng-if="fixerUser.role == 'finance_employee'" type="number" ng-model="where.customer" placeholder="Customer #"/>
             <input type="number" ng-model="where.orderNum" placeholder="Order #" />
             <input type="number" ng-model="where.number" placeholder="Payment ID" />
-            <input type="date" ng-model="where.dateFrom" placeholder="Date from" />
-            <input type="date" ng-model="where.dateTo" placeholder="Date to" />
-            <input type="number" ng-model="where.priceFrom" placeholder="Employee ID" />
-            <input type="number" ng-model="where.priceTo" placeholder="Cheque date" />
+            <input type="number" ng-model="where.priceFrom" placeholder="Payment amount from" />
+            <input type="number" ng-model="where.priceTo" placeholder="Payment amount to" />
         </div>
     </div>
     <br />

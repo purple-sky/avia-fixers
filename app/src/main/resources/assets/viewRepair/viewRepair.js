@@ -19,7 +19,7 @@ angular.module('myApp.viewRepair', ['ngRoute'])
     $scope.updateRepair = function() {
             $http
                 .post('/api/schedule/' + currId, $scope.repair)
-                .then(function(){$location.path('/view1')}, function(){});
+                .then(function(){$location.path('/repairs')}, function(){});
         }
 
     $http

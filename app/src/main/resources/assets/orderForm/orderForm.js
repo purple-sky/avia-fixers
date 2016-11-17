@@ -18,6 +18,7 @@ angular.module('myApp.orderForm', ['ngRoute'])
 
     $scope.submitOrder = function(){
         $http
+            // customerID below is a plug-in, real ID is retrieved on server side
             .post('/api/orders', {parts: $scope.parts, customerId: 200048001})
             .then(function(){$location.path('/view1')}, function(){});
     }

@@ -15,6 +15,7 @@
         <li ng-if="fixerUser.role == 'finance_employee' || fixerUser.role == 'customer'">
             <a class="dropdown-item" ng-click="setOrderBy('sellPrice')">By part price</a>
         </li>
+        <li><a class="dropdown-item" ng-click="setOrderBy('repairDate')">By repair date</a></li>
     </ul>
 </div>
 
