@@ -12,7 +12,7 @@ public class ElectronicPaymentWriteRepresentation {
     public final int cardCode;
     public final String cardHolderName;
     public final Double paymentAmount;
-    public final int customerID;
+    public final Integer customerID;
     public final int orderNumber;
     public final LocalDate paymentDate;
 
@@ -24,7 +24,7 @@ public class ElectronicPaymentWriteRepresentation {
             @JsonProperty("cardCode") int cardCode,
             @JsonProperty("cardHolderName") String cardHolderName,
             @JsonProperty("paymentAmount") Double paymentAmount,
-            @JsonProperty("customerID") int customerID
+            @JsonProperty("customerID") Integer customerID
 
             //@JsonProperty("paymentDate") LocalDate paymentDate
     ) {

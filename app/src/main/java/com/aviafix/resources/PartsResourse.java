@@ -16,7 +16,6 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -24,9 +23,6 @@ import java.util.stream.Collectors;
 import static com.aviafix.db.generated.tables.ORDERS.ORDERS;
 import static com.aviafix.db.generated.tables.HASPARTS.HASPARTS;
 import static com.aviafix.db.generated.tables.CUSTOMER_USERS.CUSTOMER_USERS;
-import static org.jooq.impl.DSL.select;
-import static org.jooq.impl.DSL.sum;
-import static org.jooq.impl.DSL.val;
 
 /**
  * Created by AlexB on 2016-10-30.

@@ -12,13 +12,23 @@ angular.module('myApp.viewReport', ['ngRoute'])
 .controller('ViewReportCtrl', ['$scope', '$http', '$location', '$routeParams',
                                 function($scope, $http, $location, $routeParams) {
     $scope.reports = [];
+    $scope.totals = {};
+
+    $scope.getTotals = function () {
+    $http
+            .get('/api/report/totals')
+            .then(function successCallback(response) {
+                $scope.totals = response.data;
+            }, function errorCallback(response) {
+    });
+
+    }
 
     $http
         .get('/api/report')
+        .then($scope.getTotals())
         .then(function successCallback(response) {
             $scope.reports = response.data;
         }, function errorCallback(response) {
-        // called asynchronously if an error occurs
-        // or server returns response with an error status.
         });
 }]);

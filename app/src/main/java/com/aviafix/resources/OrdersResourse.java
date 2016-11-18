@@ -15,11 +15,8 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.math.BigDecimal;
-import java.net.URI;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -230,7 +227,4 @@ public class OrdersResourse {
         }
         return Response.status(Response.Status.BAD_REQUEST).build();
     }
-
-
-
 }

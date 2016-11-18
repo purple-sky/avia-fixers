@@ -34,9 +34,10 @@
 <form novalidate class="form">
     <div class="form-group">
         <div class="input-group">
-            <input ng-if="fixerUser.role == 'repair_employee'" type="text" ng-model="part.repairStatus" placeholder="Repair Status" />
+            <!--<input ng-if="fixerUser.role == 'repair_employee'" type="text" ng-model="part.repairStatus" placeholder="Repair Status" />-->
             <input ng-if="fixerUser.role == 'finance_employee'" type="number" ng-model="part.repairCost" placeholder="Repair Cost" />
             <input ng-if="fixerUser.role == 'finance_employee'" type="number" ng-model="part.sellPrice" placeholder="Sell Price" />
+            <div ng-if="fixerUser.role == 'repair_employee'">Repair date</div>
             <input ng-if="fixerUser.role == 'repair_employee'" type="date" ng-model="part.repairDate" placeholder="Repair Date" />
         </div>
     </div>

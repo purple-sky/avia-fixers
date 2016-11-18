@@ -15,15 +15,15 @@ angular.module('myApp.onlinePaymentForm', ['ngRoute'])
 
     // TODO: add functionality to fill price to pay automatically
 
-    /*$scope.order = {};
+    $scope.order = [];
+    $scope.where = {order: currentId};
 
-    $scope.getOrder = function () {
-        $path
-        .get('/api/orders/'+ currentId)
-        .then(function successCallback(response) {
-            $scope.order = response.data;
-            }, function errorCallback(response) {});
-    }*/
+    $http
+            .get('/api/orders', {params: $scope.where})
+            .then(function successCallback(response) {
+                $scope.order = response.data;
+            }, function errorCallback(response) {
+    });
 
 
     $scope.submitEPayment = function(){

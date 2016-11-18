@@ -2,7 +2,6 @@ package com.aviafix.resources;
 
 import com.aviafix.api.ChequeReadRepresentation;
 import com.aviafix.api.ChequeWriteRepresentation;
-import com.aviafix.api.TotalPaymentRepresentation;
 import com.aviafix.api.UserFullReadRepresentation;
 import com.aviafix.core.OrderStatus;
 import com.aviafix.core.Roles;
@@ -17,18 +16,12 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
-import static com.aviafix.db.generated.tables.CUSTOMER_USERS.CUSTOMER_USERS;
 import static com.aviafix.db.generated.tables.ORDERS.ORDERS;
 import static com.aviafix.db.generated.tables.PAYBYCHEQUE.PAYBYCHEQUE;
-import static com.aviafix.db.generated.tables.PAYBYCREDITCARD.PAYBYCREDITCARD;
 import static com.aviafix.db.generated.tables.PAYOFFLINE.PAYOFFLINE;
-import static com.aviafix.db.generated.tables.EMPLOYEE_USERS.EMPLOYEE_USERS;
-import static org.jooq.impl.DSL.val;
-
 /**
  * Created by paull on 1/11/2016.
  * Modified by AlexB on 16/11/2016
@@ -148,12 +141,6 @@ public class ChequeResource {
             throw new WebApplicationException(Response.Status.UNAUTHORIZED);
         }
 
-        /*Record rec = database.select(EMPLOYEE_USERS.EID)
-                .from(EMPLOYEE_USERS)
-                .where(EMPLOYEE_USERS.EUID.eq(fixerUID))
-                .fetchOne();
-*/
-        //int employeeID = rec.getValue(EMPLOYEE_USERS.EID);
         int employeeID = user.employeeId;
 
         final Record orderRecord = database.select(ORDERS.ORDERNUM, ORDERS.ORDERSTATUS)

@@ -4,7 +4,6 @@ import com.aviafix.api.*;
 import com.aviafix.core.OrderStatus;
 import com.aviafix.core.Roles;
 import com.aviafix.core.UserReader;
-import com.aviafix.db.generated.tables.CUSTOMER_USERS;
 import com.aviafix.tools.OptionalFilter;
 import com.codahale.metrics.annotation.Timed;
 import org.jooq.DSLContext;
@@ -15,16 +14,13 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
 import static com.aviafix.db.generated.tables.ORDERS.ORDERS;
-import static com.aviafix.db.generated.tables.PAYBYCHEQUE.PAYBYCHEQUE;
 import static com.aviafix.db.generated.tables.PAYBYCREDITCARD.PAYBYCREDITCARD;
 import static com.aviafix.db.generated.tables.CUSTOMER_USERS.CUSTOMER_USERS;
 import static com.aviafix.db.generated.tables.PAYONLINE.PAYONLINE;
-import static org.jooq.impl.DSL.val;
 
 @Path("/epayments")
 @Produces(MediaType.APPLICATION_JSON)
@@ -120,7 +116,6 @@ public class ElectronicPaymentResource {
                 record.getValue(PAYONLINE.CIDPAYONLINE),
                 record.getValue(PAYONLINE.PYMNTDATEONLINE)
         );
-
     }
 
     // Create a new credit card payment

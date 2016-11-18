@@ -17,7 +17,11 @@ angular.module('myApp.loginForm', ['ngRoute'])
             .post('/api/login', $scope.login)
             .then(function(response){
                 $rootScope.fixerUser = response.data;
-                $location.path('/view1');
+                if (angular.equals($rootScope.fixerUser.role, "repair_employee")) {
+                    $location.path('/repairs');
+                }
+                else $location.path('/view1');
+
             }, function(){});
     }
 }]);

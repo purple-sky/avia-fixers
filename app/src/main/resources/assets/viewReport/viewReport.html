@@ -1,7 +1,6 @@
 <h2>Financial report</h2>
 
 
-
 <table class="table table-bordered table-striped">
     <thead>
     <tr>
@@ -14,12 +13,36 @@
     </thead>
     <tbody>
     <tr ng-repeat="report in reports">
-        <td rowspan="0" ng-bind="report.customer"></td>
+        <td ng-bind="report.customer"></td>
         <td ng-bind="report.order"></td>
         <td ng-bind="report.cost"></td>
         <td ng-bind="report.revenue"></td>
         <td ng-bind="report.profit"></td>
 
+    </tr>
+    </tbody>
+</table>
+
+<h1>Summary</h1>
+<table class="table table-bordered table-striped">
+    <thead>
+    <tr>
+        <th>Total cost</th>
+        <th>Average cost</th>
+        <th>Total revenue</th>
+        <th>Average revenue</th>
+        <th>Total profit</th>
+        <th>Average profit</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td ng-bind="totals.totalCost"></td>
+        <td ng-bind="totals.aveCost"></td>
+        <td ng-bind="totals.totalRevenue"></td>
+        <td ng-bind="totals.aveRevenue"></td>
+        <td ng-bind="totals.totalProfit"></td>
+        <td ng-bind="totals.aveProfit"></td>
     </tr>
     </tbody>
 </table>

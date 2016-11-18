@@ -2,15 +2,18 @@
 
 <form novalidate class="form">
     <div class="form-group" >
-        <div class="input-group">
+        <div class="input-group" ng-repeat="ord in order">
             <input type="number" ng-model="requisites.chequeNumber" placeholder="Cheque #" />
             <input type="text" ng-model="requisites.bank" placeholder="Bank name" />
-            <input type="number" ng-model="requisites.amount" placeholder="Payment Amount" />
-            <input type="number" ng-model="requisites.customerId" placeholder="Customer number" />
+            <input class="uneditable-input" type="number" ng-model="requisites.amount" ng-value="{{ord.totalPrice}}"/>
+            <input class="uneditable-input" type="number" ng-model="requisites.customerId" ng-value="{{ord.customerId}}" />
+            <div>Cheque Date</div>
             <input type="date" ng-model="requisites.date" placeholder="Cheque date" />
         </div>
+        <br />
     </div>
     <br />
     <button class="btn btn-default" type="submit" ng-click="submitCQPayment()">Submit Payment</button>
 
 </form>
+

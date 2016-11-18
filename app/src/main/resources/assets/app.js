@@ -19,6 +19,7 @@ angular.module('myApp', [
     'myApp.viewRepair',
     'myApp.viewRepairs',
     'myApp.viewReport',
+    'myApp.demo',
     'myApp.version'
 ]).
 config(['$locationProvider', '$routeProvider', function($locationProvider, $routeProvider) {

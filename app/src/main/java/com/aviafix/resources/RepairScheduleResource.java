@@ -8,14 +8,11 @@ import com.aviafix.tools.OptionalFilter;
 import com.codahale.metrics.annotation.Timed;
 import org.jooq.DSLContext;
 import org.jooq.Record;
-import org.jooq.impl.DSL;
-import org.jooq.types.Interval;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.net.URI;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -24,7 +21,6 @@ import static com.aviafix.db.generated.tables.HASPARTS.HASPARTS;
 import static com.aviafix.db.generated.tables.REPAIR.REPAIR;
 import static com.aviafix.db.generated.tables.EMPLOYEE_USERS.EMPLOYEE_USERS;
 import static com.aviafix.db.generated.tables.REPAIRSHOP_EMPLOYEES.REPAIRSHOP_EMPLOYEES;
-import static org.jooq.impl.DSL.val;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 
@@ -128,6 +124,7 @@ public class RepairScheduleResource {
         }
         return schedule;
     }
+    // TODO: fix sorting by priority for repairs
 
     @POST
     @Path("/{id}")

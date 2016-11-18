@@ -1,0 +1,36 @@
+<h2>Demo2</h2>
+<h5>find the name and id of finance employees who processed all the cheque orders above 400</h5>
+
+
+<table class="table table-bordered table-striped">
+    <thead>
+    <tr>
+        <td>Employee Name</td>
+        <td>Employee #</td>
+    </tr>
+    </thead>
+    <tbody>
+    <tr ng-repeat="result in demo2">
+        <td ng-bind="result.empName"></td>
+        <td ng-bind="result.empNumber"></td>
+    </tr>
+    </tbody>
+</table>
+
+
+<h2>Demo4</h2>
+<h5>show the average amount for the cheque paid of each bank in December 15th, 2014</h5>
+<table class="table table-bordered table-striped">
+    <thead>
+    <tr>
+        <td>Bank Name</td>
+        <td>Average</td>
+    </tr>
+    </thead>
+    <tbody>
+    <tr ng-repeat="result in demo4">
+        <td ng-bind="result.bankName"></td>
+        <td ng-bind="result.average"></td>
+    </tr>
+    </tbody>
+</table>

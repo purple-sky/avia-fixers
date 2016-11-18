@@ -1,13 +1,10 @@
 package com.aviafix.resources;
 
 import com.aviafix.api.*;
-import com.aviafix.core.OrderStatus;
 import com.aviafix.core.Roles;
 import com.aviafix.core.UserReader;
-import com.aviafix.db.generated.tables.PAYBYCHEQUE;
 import com.aviafix.tools.OptionalFilter;
 import com.codahale.metrics.annotation.Timed;
-import com.codahale.metrics.health.HealthCheck;
 import org.jooq.*;
 import org.jooq.impl.DSL;
 
@@ -15,15 +12,9 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.net.URI;
-import java.time.LocalDate;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
-import static com.aviafix.db.generated.tables.HASPARTS.HASPARTS;
-import static com.aviafix.db.generated.tables.ORDERS.ORDERS;
 import static com.aviafix.db.generated.tables.PAYBYCREDITCARD.PAYBYCREDITCARD;
 import static com.aviafix.db.generated.tables.PAYONLINE.PAYONLINE;
 import static com.aviafix.db.generated.tables.PAYBYCHEQUE.PAYBYCHEQUE;
