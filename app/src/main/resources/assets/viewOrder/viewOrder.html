@@ -1,9 +1,18 @@
-<h2>Your order
+<h1>Your order
     <span
         ng-bind="id">
     </span>
 
-</h2>
+</h1>
+<div ng-if="fixerUser.role == 'customer'">
+<h5>Customer ID: <span ng-bind="customer.id" ></span></h5>
+<div></div>
+<h5>Customer legal name: <span ng-bind="customer.legalName" ></span></h5>
+<div></div>
+<h5>Customer address: <span ng-bind="customer.address" ></span></h5>
+<div></div>
+<h5>Customer phone#: <span ng-bind="customer.phone" ></span></h5>
+</div>
 
 <table class="table table-bordered table-striped">
     <thead>

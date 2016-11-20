@@ -14,6 +14,16 @@ angular.module('myApp.viewOrder', ['ngRoute'])
     var currentId = $routeParams.id;
     $scope.id = currentId;
     $scope.fixerUser = $rootScope.fixerUser;
+    $scope.customer = {};
+
+    $scope.getCustomerInfo = function() {
+        $http
+            .get('/api/customer')
+            .then(function successCallback(response) {
+                $scope.customer = response.data;
+            }, function errorCallback(response) {
+            });
+    }
 
     $scope.onlinePayment = function (id) {
         $location.path('/onlinePaymentForm/' + id);
@@ -37,7 +47,7 @@ angular.module('myApp.viewOrder', ['ngRoute'])
     $scope.acceptOrder = function (id) {
         $http
             .put('/api/orders/'+ id, {status: "InProgress"})
-            .then(function(){$location.path('/viewOrder/:'+currId)}, function(){});
+            .then(function(){$location.path('/viewOrder/:'+ $scope.id)}, function(){});
     }
 
     $scope.deleteOrder = function (id) {
@@ -48,6 +58,7 @@ angular.module('myApp.viewOrder', ['ngRoute'])
 
     $http
         .get('/api/orders/'+ currentId)
+        .then($scope.getCustomerInfo())
         .then(function successCallback(response) {
             $scope.order = response.data;
         }, function errorCallback(response) {

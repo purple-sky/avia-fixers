@@ -17,7 +17,7 @@ angular.module('myApp.viewPart', ['ngRoute'])
     $scope.postUpdate = function () {
         $http
                     .put('/api/parts', $scope.part)
-                    .then(function(){$location.path('/viewPart/:'+currId)}, function(){});
+                    .then(function(){$location.path('/viewParts')}, function(){});
     }
 
 

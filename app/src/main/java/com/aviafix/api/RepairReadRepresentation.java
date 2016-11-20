@@ -46,4 +46,7 @@ public class RepairReadRepresentation {
         this.priority = priority;
     }
 
+    public String getPriority() {
+        return this.priority;
+    }
 }

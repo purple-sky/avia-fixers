@@ -3,14 +3,15 @@
 
 <div class="btn-group">
     <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" >
-        Part Priority
+        Sort schedule by
         <span class="caret"></span>
     </a>
     <ul class="dropdown-menu">
-        <li><a ng-click="resetOrderBy()">All</a></li>
-        <li><a ng-click="setOrderBy('Low')">Low</a></li>
-        <li><a ng-click="setOrderBy('Medium')">Medium</a></li>
-        <li><a ng-click="setOrderBy('High')">High</a></li>
+        <li><a ng-click="resetOrderBy()">None (part #)</a></li>
+        <li><a ng-click="setOrderBy('repairStatus')">Repair Status</a></li>
+        <li><a ng-click="setOrderBy('repairDate')">Repair Date</a></li>
+        <li><a ng-click="setOrderBy('eridrepair')">Repair person ID</a></li>
+        <li><a ng-click="setOrderBy('shopName')">Shop</a></li>
     </ul>
 </div>
 

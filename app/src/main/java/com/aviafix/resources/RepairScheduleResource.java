@@ -8,12 +8,14 @@ import com.aviafix.tools.OptionalFilter;
 import com.codahale.metrics.annotation.Timed;
 import org.jooq.DSLContext;
 import org.jooq.Record;
+import org.jooq.impl.DSL;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -39,6 +41,8 @@ public class RepairScheduleResource {
             @QueryParam("order") Optional<Integer> order,
             @QueryParam("mechanic") Optional<Integer> mechanic,
             @QueryParam("shop") Optional<String> shop,
+            @QueryParam("status") Optional<String> status,
+            @QueryParam("orderBy") Optional<String> orderBy,
             @Context DSLContext database,
             @CookieParam("FixerUID") int fixerUID
     ) {
@@ -75,6 +79,9 @@ public class RepairScheduleResource {
                                 .add(mechanic.map(REPAIR.ERIDREPAIR::eq))
                                 .add(shop.map(REPAIRSHOP_EMPLOYEES.SHOPNAME::contains))
                                 .combineWithAnd()))
+                .orderBy(DSL.field(
+                        orderBy.orElse("partNum")
+                ))
                 .fetchInto(RepairReadRepresentation.class);
 
         for (RepairReadRepresentation r:schedule) {
@@ -84,6 +91,29 @@ public class RepairScheduleResource {
             } else if (daysBetween > 10) {
                 r.setPriority(RepairPriority.MEDIUM);
             } else r.setPriority(RepairPriority.HIGH);
+        }
+        if (status.isPresent()) {
+            List<RepairReadRepresentation> modifying = new ArrayList<>();
+            if (status.get().toString().equals("Low")) {
+                for (RepairReadRepresentation repair: schedule) {
+                    if (repair.getPriority().equals("Low")) {
+                        modifying.add(repair);
+                    }
+                }
+            } else if (status.get().toString().equals("Medium")) {
+                for (RepairReadRepresentation repair: schedule) {
+                    if (repair.getPriority().equals("Medium")) {
+                        modifying.add(repair);
+                    }
+                }
+            } else if (status.get().toString().equals("High")) {
+                for (RepairReadRepresentation repair: schedule) {
+                    if (repair.getPriority().equals("High")) {
+                        modifying.add(repair);
+                    }
+                }
+            }
+            schedule = modifying;
         }
         return schedule;
     }
