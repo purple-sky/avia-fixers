@@ -190,29 +190,30 @@ public class RepairScheduleResource {
                                 id,
                                 order)
                         .execute();
+
+
+                if (repair.status.equals(PartStatus.COMPLETE)) {
+                    database.update(HASPARTS)
+                            .set(HASPARTS.REPAIRSTATUS, repair.status)
+                            .set(HASPARTS.REPAIRDATE, LocalDate.now())
+                            .where(HASPARTS.PARTNUM.equal(id))
+                            .execute();
+
+                    database.fetch("UPDATE orders SET orderRepairDate = (SELECT MAX(repairDate) FROM hasParts WHERE porderNum = ?) WHERE orderNum = ?", order, order)
+                            .format();
+
+                        //check for all parts in order have "Complete" => update order status to "Complete"
+
+                    database.fetch("UPDATE orders SET orderStatus = CASE " +
+                            "WHEN (SELECT COUNT(*) FROM hasParts WHERE porderNum = ?) = " +
+                            "(SELECT COUNT(*) FROM hasParts WHERE porderNum = ? AND repairStatus = ?) " +
+                            "THEN ? ELSE ? END " +
+                            "WHERE orderNum = ?", order, order, PartStatus.COMPLETE, OrderStatus.COMPLETE, OrderStatus.IN_PROGRESS, order)
+                            .format();
+                }
+
+                return Response.ok().build();
             }
-
-            if (repair.status.equals(PartStatus.COMPLETE)) {
-                database.update(HASPARTS)
-                        .set(HASPARTS.REPAIRSTATUS, repair.status)
-                        .set(HASPARTS.REPAIRDATE, LocalDate.now())
-                        .where(HASPARTS.PARTNUM.equal(id))
-                        .execute();
-
-                database.fetch("UPDATE orders SET orderRepairDate = (SELECT MAX(repairDate) FROM hasParts WHERE porderNum = ?) WHERE orderNum = ?", order, order)
-                        .format();
-
-                    //check for all parts in order have "Complete" => update order status to "Complete"
-
-                database.fetch("UPDATE orders SET orderStatus = CASE " +
-                        "WHEN (SELECT COUNT(*) FROM hasParts WHERE porderNum = ?) = " +
-                        "(SELECT COUNT(*) FROM hasParts WHERE porderNum = ? AND repairStatus = ?) " +
-                        "THEN ? ELSE ? END " +
-                        "WHERE orderNum = ?", order, order, PartStatus.COMPLETE, OrderStatus.COMPLETE, OrderStatus.IN_PROGRESS, order)
-                        .format();
-            }
-
-            return Response.ok().build();
         }
         return Response.status(Response.Status.BAD_REQUEST).build();
     }

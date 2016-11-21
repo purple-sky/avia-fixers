@@ -43,7 +43,7 @@ public class DemosResourse {
     ) {
         // Done by TimW
         //some division query (find the name and id of finance employees who processed all the cheque orders above 400)
-        final int threshold = 400;
+        final double threshold = 400.00;
 
         /* Query in Plain SQL works as well, just outputs string
         String result = database.fetch("SELECT distinct eName, eID " +
@@ -67,7 +67,7 @@ public class DemosResourse {
                                                 .from(PAYOFFLINE, PAYBYCHEQUE)
                                                 .where(PAYOFFLINE.FEIDPAYOFFLINE.eq(EMPLOYEE_USERS.EID)
                                                         .and(PAYBYCHEQUE.CHEQUENUM.eq(PAYOFFLINE.CQNUMPAYOFFLINE))
-                                                        .and(PAYBYCHEQUE.AMOUNT.le(400.00))
+                                                        .and(PAYBYCHEQUE.AMOUNT.le(threshold))
                                                 )
                                 ))
                         )

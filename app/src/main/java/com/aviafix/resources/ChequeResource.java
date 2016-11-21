@@ -38,7 +38,7 @@ public class ChequeResource {
 
     @GET
     @Timed
-    public List<ChequeReadRepresentation> getOrders(
+    public List<ChequeReadRepresentation> getCheques(
             @QueryParam("order") Optional<Integer> order,
             @QueryParam("customer") Optional<Integer> customer,
             @QueryParam("priceFrom") Optional<Double> priceFrom,
@@ -91,7 +91,7 @@ public class ChequeResource {
     @GET
     @Path("/{id}")
     @Timed
-    public ChequeReadRepresentation getEpayments(
+    public ChequeReadRepresentation getCheque(
             @Context DSLContext database,
             @PathParam("id") Integer id
     ) {
